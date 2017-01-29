@@ -1,0 +1,5 @@
+%YAML 1.1
+---
+packages:
+    - fictibot_drivers
+    - fictibot_controller
