@@ -8,7 +8,7 @@
 class MotorManager
 {
 public:
-    MotorManager(ros::NodeHandle n, double hz);
+    MotorManager(ros::NodeHandle& n, double hz);
 
     ~MotorManager(){};
 

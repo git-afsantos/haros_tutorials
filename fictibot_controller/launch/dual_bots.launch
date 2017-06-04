@@ -1,0 +1,11 @@
+<launch>
+<group ns="one">
+  <node name="fictibase" pkg="fictibot_drivers" type="fictibot_driver" />
+  <node name="ficticontrol" pkg="fictibot_controller" type="fictibot_controller" />
+</group>
+
+<group ns="two">
+  <node name="fictibase" pkg="fictibot_drivers" type="fictibot_driver" />
+  <node name="ficticontrol" pkg="fictibot_controller" type="fictibot_controller" />
+</group>
+</launch>

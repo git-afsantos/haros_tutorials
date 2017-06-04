@@ -8,7 +8,7 @@
 
 #include "fictibot_controller/random_controller.h"
 
-RandomController::RandomController(ros::NodeHandle n, double hz)
+RandomController::RandomController(ros::NodeHandle& n, double hz)
     : stop_(false)
     , laser_proximity_(false)
     , bumper_left_pressed_(false)
@@ -23,9 +23,9 @@ RandomController::RandomController(ros::NodeHandle n, double hz)
     uint32_t queue_size    = (uint32_t) hz * 2 + 1;
 
     command_publisher_     = n.advertise<std_msgs::Float64>("controller_cmd",
-                                                            queue_size);
-    stop_publisher_        = n.advertise<std_msgs::Empty>("stop_cmd",
-                                                          queue_size);
+                                                            1);
+    stop_publisher_        = n.advertise<std_msgs::Empty>("/stop_cmd",
+                                                          0);
 
     laser_subscriber_      = n.subscribe("laser", queue_size,
             &RandomController::laser_callback, this);

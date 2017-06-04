@@ -1,0 +1,10 @@
+<launch>
+  <node name="fictibase" pkg="fictibot_drivers" type="fictibot_driver">
+    <remap from="laser" to="~laser" />
+    <remap from="wheel" to="~wheel" />
+    <remap from="bumper" to="~bumper" />
+  </node>
+
+  <node name="ficticontrol" pkg="fictibot_controller" type="fictibot_controller">
+  </node>
+</launch>

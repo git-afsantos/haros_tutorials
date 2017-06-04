@@ -3,7 +3,7 @@
 #include <std_msgs/Int8.h>
 #include "fictibot_drivers/sensor_manager.h"
 
-SensorManager::SensorManager(ros::NodeHandle n, double hz)
+SensorManager::SensorManager(ros::NodeHandle& n, double hz)
 {
     uint32_t queue_size   = (uint32_t) hz * 2 + 1;
 

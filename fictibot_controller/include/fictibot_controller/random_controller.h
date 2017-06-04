@@ -7,7 +7,7 @@
 class RandomController
 {
 public:
-    RandomController(ros::NodeHandle n, double hz);
+    RandomController(ros::NodeHandle& n, double hz);
 
     ~RandomController(){};
 

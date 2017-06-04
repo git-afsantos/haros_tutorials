@@ -4,7 +4,7 @@
 #include <math.h>
 #include "fictibot_drivers/motor_manager.h"
 
-MotorManager::MotorManager(ros::NodeHandle n, double hz)
+MotorManager::MotorManager(ros::NodeHandle& n, double hz)
     : teleop_priority_(0)
     , stop_cycles_(0)
     , command_(0)

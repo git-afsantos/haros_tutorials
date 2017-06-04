@@ -6,7 +6,7 @@
 class SensorManager
 {
 public:
-    SensorManager(ros::NodeHandle n, double hz);
+    SensorManager(ros::NodeHandle& n, double hz);
 
     ~SensorManager(){};
 
