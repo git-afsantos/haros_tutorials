@@ -22,6 +22,10 @@ RandomController::RandomController(ros::NodeHandle& n, double hz)
 
     uint32_t queue_size    = (uint32_t) hz * 2 + 1;
 
+    std::string some_param;
+    n.param<std::string>("param", some_param, "nothing");
+    n.setParam("set_param", some_param);
+
     command_publisher_     = n.advertise<std_msgs::Float64>("controller_cmd",
                                                             1);
     stop_publisher_        = n.advertise<std_msgs::Empty>("/stop_cmd",
