@@ -1,5 +1,23 @@
 %YAML 1.1
 ---
+project: haros_tutorials
 packages:
     - fictibot_drivers
     - fictibot_controller
+configurations:
+    minimal:
+        - fictibot_controller/launch/minimal.launch
+    dual_bots:
+        - fictibot_controller/launch/dual_bots.launch
+    double_remap:
+        - fictibot_controller/launch/double_remap.launch
+    missing_remap:
+        - fictibot_controller/launch/missing_remap.launch
+    name_collision:
+        - fictibot_controller/launch/name_collision.launch
+    params:
+        - fictibot_controller/launch/params.launch
+    rosparam:
+        - fictibot_controller/launch/rosparam.launch
+    type_check:
+        - fictibot_controller/launch/type_check.launch

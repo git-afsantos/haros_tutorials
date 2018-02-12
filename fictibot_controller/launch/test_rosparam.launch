@@ -1,0 +1,50 @@
+<!--{
+~ns/p/a: 1,
+~p/b: 1,
+/c: 1,
+~d: 1,
+/ns/e: 1,
+/f: 1,
+~g: 1,
+/node/ns/p/h: 1,
+/i: 1,
+~j: 1,
+~p/k: 1,
+/l: 1,
+~m: 1,
+/node/n: 1,
+/o: 1,
+~q: 1,
+/node/ns/r: 1,
+/s: 1,
+~t: 1,
+/p/u: 1,
+/v: 1,
+~w: 1,
+/ns/p/x: 1,
+~ns/p/y: 1,
+~p/z: 1
+}-->
+<launch>
+  <rosparam command="delete" param="~AA"/>  <!--deletes "/rosparam/AA"-->
+  <rosparam ns="~ns" param="p">{a: 1}</rosparam>
+  <rosparam ns="ns" param="~p">{b: 1}</rosparam>
+  <rosparam ns="ns" param="/c">1</rosparam>
+  <rosparam ns="ns" param="~d">1</rosparam>
+  <rosparam ns="ns">{e: 1, /f: 1, ~g: 1}</rosparam>
+
+    <group ns="myns">
+        <rosparam param="~p">{A: 1, /B: 1, ~C: 1}</rosparam>
+    </group>
+
+  <node name="node" pkg="fictibot_controller" type="fictibot_controller">
+    <rosparam ns="ns" param="p">{h: 1, /i: 1, ~j: 1}</rosparam>
+    <rosparam ns="ns" param="~p">{k: 1, /l: 1, ~m: 1}</rosparam>
+    <rosparam>{n: 1, /o: 1, ~q: 1}</rosparam>
+    <rosparam ns="ns">{r: 1, /s: 1, ~t: 1}</rosparam>
+    <rosparam ns="ns" param="/p">{u: 1, /v: 1, ~w: 1}</rosparam>
+    <rosparam ns="/ns" param="p">{x: 1}</rosparam>
+    <rosparam ns="~ns" param="p">{y: 1}</rosparam>
+    <rosparam ns="~ns" param="~p">{z: 1}</rosparam>
+  </node>
+</launch>

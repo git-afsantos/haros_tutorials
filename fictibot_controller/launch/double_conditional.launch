@@ -1,0 +1,3 @@
+<launch>
+    <param name="my_param" value="1" if="true" unless="false" />
+</launch>

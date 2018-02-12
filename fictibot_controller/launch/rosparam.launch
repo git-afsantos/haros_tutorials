@@ -1,0 +1,22 @@
+<launch>
+  <param name="myparam" value="{a: 1, b: 2}" />
+
+  <rosparam ns="ns" param="p">{a: 1, b: 2}</rosparam>
+  <rosparam ns="ns" param="/p">{a: 1, b: 2}</rosparam>
+  <rosparam ns="ns" param="/a">1</rosparam>
+  <rosparam ns="/ns" param="p">{c: 3}</rosparam>
+  <rosparam ns="ns">{d: 4}</rosparam>
+  <rosparam ns="ns" param="p">{/b: 2}</rosparam>
+
+  <node name="fictibase" pkg="fictibot_drivers" type="fictibot_driver" />
+  <node name="ficticontrol" pkg="fictibot_controller" type="fictibot_controller">
+    <rosparam ns="ns" param="p">{e: 5, f: 6}</rosparam>
+    <rosparam ns="ns" param="e">5</rosparam>
+    <rosparam>{e: 5, f: 6}</rosparam>
+    <rosparam ns="ns">{f: 6}</rosparam>
+    <rosparam ns="ns" param="/p">{e: 5, f: 6}</rosparam>
+    <rosparam ns="ns" param="/e">5</rosparam>
+    <rosparam ns="/ns" param="p">{f: 6}</rosparam>
+    <rosparam ns="ns" param="p">{/f: 6}</rosparam>
+  </node>
+</launch>

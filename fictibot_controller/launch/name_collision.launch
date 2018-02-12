@@ -1,0 +1,9 @@
+<launch>
+    <param name="node" value="1" />
+
+    <node name="node" pkg="fictibot_drivers" type="fictibot_driver">
+        <remap from="bumper" to="node" />
+        <remap from="laser" to="node" />
+        <remap from="wheel" to="~set_logger_level" />
+    </node>
+</launch>
