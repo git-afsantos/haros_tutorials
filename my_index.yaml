@@ -13,6 +13,8 @@ configurations:
         - fictibot_controller/launch/double_remap.launch
     missing_remap:
         - fictibot_controller/launch/missing_remap.launch
+    missing_node:
+        - fictibot_controller/launch/missing_node.launch
     name_collision:
         - fictibot_controller/launch/name_collision.launch
     params:
@@ -42,10 +44,11 @@ rules:
             - custom
             - ros-comm
             - type-checking
-        query: "for p in <configs/nodes/publishers>,
-                    s in <configs/nodes/subscribers>
-                where p.topic_name == s.topic_name and p.type != s.type
-                return p, s"
+        scope: configuration
+        query: "for p in <nodes/publishers | nodes/subscribers>,
+                    q in <nodes/publishers | nodes/subscribers>
+                where p.topic_name == q.topic_name and p.type != q.type
+                return p, q"
     infinite_queues:
         name: Avoid Infinite Topic Queues
         description: Topic message queues should not use a queue size of zero.

@@ -1,0 +1,8 @@
+<launch>
+  <node name="fictibase" pkg="fictibot_drivers" type="fictibot_driver" />
+  <node name="ficticontrol" pkg="fictibot_controller" type="fictibot_controller" />
+
+  <node name="fictinode" pkg="unknown" type="unknown">
+    <param name="private" value="secret" />
+  </node>
+</launch>
