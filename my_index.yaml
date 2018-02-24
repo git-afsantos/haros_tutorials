@@ -4,7 +4,10 @@ project: haros_tutorials
 packages:
     - fictibot_drivers
     - fictibot_controller
+    - minimal_example
 configurations:
+    barebones:
+        - minimal_example/launch/minimal.launch
     minimal:
         - fictibot_controller/launch/minimal.launch
     dual_bots:
