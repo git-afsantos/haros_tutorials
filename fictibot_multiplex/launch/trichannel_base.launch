@@ -1,0 +1,4 @@
+<launch>
+  <node name="fictibase" pkg="fictibot_drivers" type="fictibot_driver" />
+  <node name="fictiplex" pkg="fictibot_multiplex" type="fictibot_multiplex" />
+</launch>

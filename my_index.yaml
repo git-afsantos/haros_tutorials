@@ -26,6 +26,8 @@ configurations:
         - fictibot_controller/launch/rosparam.launch
     type_check:
         - fictibot_controller/launch/type_check.launch
+    multiplex:
+        - fictibot_controller/launch/multiplexer.launch
 rules:
     no_conditional_comm:
         name: No Conditional Communications
