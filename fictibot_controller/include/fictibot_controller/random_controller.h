@@ -3,6 +3,7 @@
 
 #include <ros/ros.h>
 #include <std_msgs/Int8.h>
+#include <fictibot_msgs/Custom.h>
 
 class RandomController
 {
@@ -27,7 +28,7 @@ private:
     ros::Publisher stop_publisher_, command_publisher_;
 
     ros::Subscriber laser_subscriber_, bumper_subscriber_,
-                    wheel_drop_subscriber_;
+                    wheel_drop_subscriber_, custom_subscriber_;
 
 
     void laser_callback(const std_msgs::Int8::ConstPtr& msg);
@@ -35,6 +36,8 @@ private:
     void bumper_callback(const std_msgs::Int8::ConstPtr& msg);
 
     void wheel_callback(const std_msgs::Int8::ConstPtr& msg);
+
+    void custom_callback(const fictibot_msgs::Custom::ConstPtr& msg);
 };
 
 #endif /*RANDOM_CONTROLLER_H_*/

@@ -37,6 +37,8 @@ RandomController::RandomController(ros::NodeHandle& n, double hz)
             &RandomController::bumper_callback, this);
     wheel_drop_subscriber_ = n.subscribe("wheel", queue_size,
             &RandomController::wheel_callback, this);
+    custom_subscriber_     = n.subscribe("custom", queue_size,
+            &RandomController::custom_callback, this);
 }
 
 
@@ -169,4 +171,9 @@ void RandomController::wheel_callback(const std_msgs::Int8::ConstPtr& msg)
     {
         wheel_right_dropped_ = false;
     }
+}
+
+void RandomController::custom_callback(const fictibot_msgs::Custom::ConstPtr& msg)
+{
+    ROS_INFO("Received custom message!");
 }
