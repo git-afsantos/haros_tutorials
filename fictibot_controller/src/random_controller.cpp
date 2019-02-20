@@ -37,8 +37,13 @@ RandomController::RandomController(ros::NodeHandle& n, double hz)
             &RandomController::bumper_callback, this);
     wheel_drop_subscriber_ = n.subscribe("wheel", queue_size,
             &RandomController::wheel_callback, this);
-    custom_subscriber_     = n.subscribe("custom", queue_size,
-            &RandomController::custom_callback, this);
+    if (some_param == "nothing") {
+        custom_subscriber_ = n.subscribe("custom_noparam", queue_size,
+                &RandomController::custom_callback, this);
+    } else {
+        custom_subscriber_ = n.subscribe("custom_w_param", queue_size,
+                &RandomController::custom_callback, this);
+    }
 }
 
 
