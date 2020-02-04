@@ -8,27 +8,38 @@ packages:
     - minimal_example
 configurations:
     barebones:
-        - minimal_example/launch/minimal.launch
+        launch:
+            - minimal_example/launch/minimal.launch
     minimal:
-        - fictibot_controller/launch/minimal.launch
+        launch:
+            - fictibot_controller/launch/minimal.launch
     dual_bots:
-        - fictibot_controller/launch/dual_bots.launch
+        launch:
+            - fictibot_controller/launch/dual_bots.launch
     double_remap:
-        - fictibot_controller/launch/double_remap.launch
+        launch:
+            - fictibot_controller/launch/double_remap.launch
     missing_remap:
-        - fictibot_controller/launch/missing_remap.launch
+        launch:
+            - fictibot_controller/launch/missing_remap.launch
     missing_node:
-        - fictibot_controller/launch/missing_node.launch
+        launch:
+            - fictibot_controller/launch/missing_node.launch
     name_collision:
-        - fictibot_controller/launch/name_collision.launch
+        launch:
+            - fictibot_controller/launch/name_collision.launch
     params:
-        - fictibot_controller/launch/params.launch
+        launch:
+            - fictibot_controller/launch/params.launch
     rosparam:
-        - fictibot_controller/launch/rosparam.launch
+        launch:
+            - fictibot_controller/launch/rosparam.launch
     type_check:
-        - fictibot_controller/launch/type_check.launch
+        launch:
+            - fictibot_controller/launch/type_check.launch
     multiplex:
-        - fictibot_controller/launch/multiplexer.launch
+        launch:
+            - fictibot_controller/launch/multiplexer.launch
 rules:
     no_conditional_comm:
         name: No Conditional Communications

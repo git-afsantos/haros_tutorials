@@ -16,6 +16,7 @@ TriChannelMultiplexer::TriChannelMultiplexer(ros::NodeHandle& n, double hz)
 
     command_publisher_ = n.advertise<std_msgs::Float64>("controller_cmd", queue_size);
     stop_publisher_ = n.advertise<std_msgs::Empty>("stop_cmd", queue_size);
+    state_publisher_ = n.advertise<std_msgs::Int8>("state", queue_size);
 
     high_cmd_subscriber_ = n.subscribe("high_priority_cmd", queue_size,
             &TriChannelMultiplexer::high_cmd_callback, this);
@@ -29,6 +30,9 @@ TriChannelMultiplexer::TriChannelMultiplexer(ros::NodeHandle& n, double hz)
             &TriChannelMultiplexer::low_cmd_callback, this);
     low_stop_subscriber_ = n.subscribe("low_priority_stop", queue_size,
             &TriChannelMultiplexer::low_stop_callback, this);
+    std_msgs::Int8 state_msg;
+    state_msg.data = (int8_t) LOW_PRIORITY;
+    state_publisher_.publish(state_msg);
 }
 
 
@@ -40,6 +44,9 @@ void TriChannelMultiplexer::spin()
     {
         channel_ = LOW_PRIORITY;
         inactivity_counter_ = priority_cycles_;
+        std_msgs::Int8 state_msg;
+        state_msg.data = (int8_t) LOW_PRIORITY;
+        state_publisher_.publish(state_msg);
     }
 
     ros::spinOnce();
@@ -51,6 +58,9 @@ void TriChannelMultiplexer::high_cmd_callback(const std_msgs::Float64::ConstPtr&
     command_publisher_.publish(msg);
     channel_ = HIGH_PRIORITY;
     inactivity_counter_ = priority_cycles_;
+    std_msgs::Int8 state_msg;
+    state_msg.data = (int8_t) HIGH_PRIORITY;
+    state_publisher_.publish(state_msg);
 }
 
 void TriChannelMultiplexer::high_stop_callback(const std_msgs::Empty::ConstPtr& msg)
@@ -58,6 +68,9 @@ void TriChannelMultiplexer::high_stop_callback(const std_msgs::Empty::ConstPtr& 
     stop_publisher_.publish(msg);
     channel_ = HIGH_PRIORITY;
     inactivity_counter_ = priority_cycles_;
+    std_msgs::Int8 state_msg;
+    state_msg.data = (int8_t) HIGH_PRIORITY;
+    state_publisher_.publish(state_msg);
 }
 
 void TriChannelMultiplexer::normal_cmd_callback(const std_msgs::Float64::ConstPtr& msg)
@@ -67,6 +80,9 @@ void TriChannelMultiplexer::normal_cmd_callback(const std_msgs::Float64::ConstPt
         command_publisher_.publish(msg);
         channel_ = NORMAL_PRIORITY;
         inactivity_counter_ = priority_cycles_;
+        std_msgs::Int8 state_msg;
+        state_msg.data = (int8_t) NORMAL_PRIORITY;
+        state_publisher_.publish(state_msg);
     }
 }
 
@@ -77,6 +93,9 @@ void TriChannelMultiplexer::normal_stop_callback(const std_msgs::Empty::ConstPtr
         stop_publisher_.publish(msg);
         channel_ = NORMAL_PRIORITY;
         inactivity_counter_ = priority_cycles_;
+        std_msgs::Int8 state_msg;
+        state_msg.data = (int8_t) NORMAL_PRIORITY;
+        state_publisher_.publish(state_msg);
     }
 }
 
