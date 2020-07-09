@@ -1,0 +1,3 @@
+<launch>
+  <node name="mini" pkg="mini2" type="mini" output="screen" />
+</launch>
