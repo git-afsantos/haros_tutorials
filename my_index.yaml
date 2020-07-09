@@ -122,3 +122,10 @@ rules:
                 }
                 where len(pairs) > 0
                 return c, pairs"
+    match_multiple_times:
+        name: Match Multiple Times
+        description: A query that matches multiple results
+        tags:
+            - custom
+        scope: configuration
+        query: "for n in <nodes> return n"

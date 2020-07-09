@@ -1,0 +1,299 @@
+%YAML 1.1
+---
+project: haros_tutorials
+packages:
+    - fictibot_drivers
+    - fictibot_controller
+    - fictibot_multiplex
+    - fictibot_msgs
+configurations:
+    multiplex:
+        launch:
+            - fictibot_controller/launch/multiplexer.launch
+        hpl:
+            properties: []
+            assumptions: []
+        user_data:
+            haros_plugin_model_ged:
+                truth:
+                    nodes:
+                        /fictibase:
+                            node_type: fictibot_drivers/fictibot_driver
+                            traceability:
+                                package: fictibot_controller
+                                file: launch/multiplexer.launch
+                                line: 2
+                                column: 3
+                            publishers:
+                                - topic: /bumper
+                                  msg_type: std_msgs/Int8
+                                  queue_size: 21
+                                  traceability:
+                                    package: fictibot_drivers
+                                    file: src/sensor_manager.cpp
+                                    line: 10
+                                    column: 29
+                                - topic: /laser
+                                  msg_type: std_msgs/Int8
+                                  queue_size: 21
+                                  traceability:
+                                    package: fictibot_drivers
+                                    file: src/sensor_manager.cpp
+                                    line: 11
+                                    column: 29
+                                - topic: /wheel
+                                  msg_type: std_msgs/Int8
+                                  queue_size: 21
+                                  traceability:
+                                    package: fictibot_drivers
+                                    file: src/sensor_manager.cpp
+                                    line: 12
+                                    column: 29
+                            subscribers:
+                                - topic: /stop_cmd
+                                  msg_type: std_msgs/Empty
+                                  queue_size: 21
+                                  traceability:
+                                    package: fictibot_drivers
+                                    file: src/motor_manager.cpp
+                                    line: 15
+                                    column: 30
+                                - topic: /teleop_cmd
+                                  msg_type: std_msgs/Float64
+                                  queue_size: 21
+                                  traceability:
+                                    package: fictibot_drivers
+                                    file: src/motor_manager.cpp
+                                    line: 17
+                                    column: 30
+                                - topic: /controller_cmd
+                                  msg_type: std_msgs/Float64
+                                  queue_size: 21
+                                  traceability:
+                                    package: fictibot_drivers
+                                    file: src/motor_manager.cpp
+                                    line: 19
+                                    column: 30
+                        /fictiplex:
+                            node_type: fictibot_multiplex/fictibot_multiplex
+                            traceability:
+                                package: fictibot_controller
+                                file: launch/multiplexer.launch
+                                line: 3
+                                column: 3
+                            publishers:
+                                - topic: /controller_cmd
+                                  msg_type: std_msgs/Float64
+                                  queue_size: 21
+                                  traceability:
+                                    package: fictibot_multiplex
+                                    file: src/trichannel_multiplex.cpp
+                                    line: 17
+                                    column: 26
+                                - topic: /stop_cmd
+                                  rosname: /stop_cmd
+                                  msg_type: std_msgs/Empty
+                                  queue_size: 21
+                                  traceability:
+                                    package: fictibot_multiplex
+                                    file: src/trichannel_multiplex.cpp
+                                    line: 18
+                                    column: 23
+                                - topic: /state
+                                  msg_type: std_msgs/Int8
+                                  queue_size: 21
+                                  traceability:
+                                    package: fictibot_multiplex
+                                    file: src/trichannel_multiplex.cpp
+                                    line: 19
+                                    column: 24
+                            subscribers:
+                                - topic: /high_priority_cmd
+                                  msg_type: std_msgs/Float64
+                                  queue_size: 21
+                                  traceability:
+                                    package: fictibot_multiplex
+                                    file: src/trichannel_multiplex.cpp
+                                    line: 21
+                                    column: 28
+                                - topic: /normal_priority_cmd
+                                  msg_type: std_msgs/Float64
+                                  queue_size: 21
+                                  traceability:
+                                    package: fictibot_multiplex
+                                    file: src/trichannel_multiplex.cpp
+                                    line: 25
+                                    column: 30
+                                - topic: /low_priority_cmd
+                                  msg_type: std_msgs/Float64
+                                  queue_size: 21
+                                  traceability:
+                                    package: fictibot_multiplex
+                                    file: src/trichannel_multiplex.cpp
+                                    line: 29
+                                    column: 27
+                                - topic: /high_priority_stop
+                                  msg_type: std_msgs/Empty
+                                  queue_size: 21
+                                  traceability:
+                                    package: fictibot_multiplex
+                                    file: src/trichannel_multiplex.cpp
+                                    line: 23
+                                    column: 29
+                                - topic: /normal_priority_stop
+                                  msg_type: std_msgs/Empty
+                                  queue_size: 21
+                                  traceability:
+                                    package: fictibot_multiplex
+                                    file: src/trichannel_multiplex.cpp
+                                    line: 27
+                                    column: 31
+                                - topic: /low_priority_stop
+                                  msg_type: std_msgs/Empty
+                                  queue_size: 21
+                                  traceability:
+                                    package: fictibot_multiplex
+                                    file: src/trichannel_multiplex.cpp
+                                    line: 31
+                                    column: 28
+                        /ficticontrol:
+                            node_type: fictibot_controller/fictibot_controller
+                            traceability:
+                                package: fictibot_controller
+                                file: launch/multiplexer.launch
+                                line: 4
+                                column: 3
+                            publishers:
+                                - topic: /normal_priority_cmd
+                                  rosname: /controller_cmd
+                                  msg_type: std_msgs/Float64
+                                  queue_size: 1
+                                  traceability:
+                                    package: fictibot_controller
+                                    file: src/random_controller.cpp
+                                    line: 29
+                                    column: 30
+                                - topic: /normal_priority_stop
+                                  rosname: /stop_cmd
+                                  msg_type: std_msgs/Empty
+                                  queue_size: 0
+                                  traceability:
+                                    package: fictibot_controller
+                                    file: src/random_controller.cpp
+                                    line: 31
+                                    column: 30
+                            subscribers:
+                                - topic: /laser
+                                  msg_type: std_msgs/Int8
+                                  queue_size: 21
+                                  traceability:
+                                    package: fictibot_controller
+                                    file: src/random_controller.cpp
+                                    line: 34
+                                    column: 30
+                                - topic: /bumper
+                                  msg_type: std_msgs/Int8
+                                  queue_size: 21
+                                  traceability:
+                                    package: fictibot_controller
+                                    file: src/random_controller.cpp
+                                    line: 36
+                                    column: 30
+                                - topic: /wheel
+                                  msg_type: std_msgs/Int8
+                                  queue_size: 21
+                                  traceability:
+                                    package: fictibot_controller
+                                    file: src/random_controller.cpp
+                                    line: 38
+                                    column: 30
+                                - topic: /custom_noparam
+                                  msg_type: fictibot_msgs/Custom
+                                  queue_size: 21
+                                  conditions:
+                                    - - statement: if
+                                        condition: '(some_param == "nothing")'
+                                        package: fictibot_controller
+                                        file: src/random_controller.cpp
+                                        line: 40
+                                        column: 5
+                                  traceability:
+                                    package: fictibot_controller
+                                    file: src/random_controller.cpp
+                                    line: 41
+                                    column: 30
+                                - topic: /custom_w_param
+                                  msg_type: fictibot_msgs/Custom
+                                  queue_size: 21
+                                  conditions:
+                                    - - statement: else
+                                        condition: '(some_param == "nothing")'
+                                        package: fictibot_controller
+                                        file: src/random_controller.cpp
+                                        line: 43
+                                        column: 5
+                                  traceability:
+                                    package: fictibot_controller
+                                    file: src/random_controller.cpp
+                                    line: 44
+                                    column: 30
+                            setters:
+                                - parameter: /set_param
+                                  param_type: str
+                                  traceability:
+                                    package: fictibot_controller
+                                    file: src/random_controller.cpp
+                                    line: 27
+                                    column: 5
+                            getters:
+                                - parameter: /param
+                                  param_type: str
+                                  traceability:
+                                    package: fictibot_controller
+                                    file: src/random_controller.cpp
+                                    line: 26
+                                    column: 5
+nodes:
+    fictibot_drivers/fictibot_driver:
+        hpl:
+            properties:
+                - "globally: no /bumper {not data in [0 to 7]}"
+                - "globally: no /laser {not data in [0 to 127]}"
+                - "globally: no /wheel {not data in [0 to 15]}"
+                - "globally: some /bumper within 500 ms"
+                - "globally: some /laser within 500 ms"
+                - "globally: some /wheel within 500 ms"
+            assumptions: []
+        user_data:
+            haros_plugin_pbt_gen:
+                slack: 0.05
+                # ignored: []
+                # extra_monitors: True
+    fictibot_controller/fictibot_controller:
+        hpl:
+            properties:
+                - "globally: /bumper {data != 0} causes /stop_cmd within 200 ms"
+                - "globally: /laser {data <= 50} causes /stop_cmd within 200 ms"
+                - "globally: /wheel {data in {3, 6, 7, 9, 10, 11, 12, 13, 14, 15}} causes /stop_cmd within 200 ms"
+                - "globally: no /controller_cmd {not data in ![-3.141593 to 3.141593]!}"
+            assumptions: []
+        user_data:
+            haros_plugin_pbt_gen:
+                slack: 0.05
+    fictibot_multiplex/fictibot_multiplex:
+        hpl:
+            properties:
+                - "globally: /high_priority_cmd as CMD causes /controller_cmd {data = @CMD.data} within 100 ms"
+                - "globally: /high_priority_stop causes /stop_cmd within 100 ms"
+                - "globally: /controller_cmd as CMD requires /normal_priority_cmd {data = @CMD.data} within 100 ms"
+                - "globally: /stop_cmd requires /high_priority_stop within 100 ms"
+                - "after /state {data > 0}: /controller_cmd as CMD requires /high_priority_cmd {data = @CMD.data} within 100 ms"
+                - "after /state {data > 0}: /stop_cmd requires /high_priority_stop within 100 ms"
+                - "after /state {data = 0} until /high_priority_cmd: /controller_cmd as CMD requires /normal_priority_cmd {data = @CMD.data} within 100 ms"
+                - "after /state {data = 0} until /high_priority_cmd: /stop_cmd requires /normal_priority_stop within 100 ms"
+                - "after /state {data < 0} until /high_priority_cmd: /controller_cmd as CMD requires /low_priority_cmd {data = @CMD.data} within 100 ms"
+                - "after /state {data < 0} until /high_priority_cmd: /stop_cmd requires /low_priority_stop within 100 ms"
+            assumptions: []
+        user_data:
+            haros_plugin_pbt_gen:
+                slack: 0.05
