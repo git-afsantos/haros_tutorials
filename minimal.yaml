@@ -1,0 +1,9 @@
+%YAML 1.1
+---
+project: Minimal
+packages:
+    - minimal_example
+configurations:
+    minimal:
+        launch:
+            - minimal_example/launch/minimal.launch

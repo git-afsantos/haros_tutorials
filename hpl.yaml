@@ -1,0 +1,53 @@
+%YAML 1.1
+---
+project: Fictibot
+packages:
+    - fictibot_drivers
+    - fictibot_controller
+    - fictibot_multiplex
+    - fictibot_msgs
+configurations:
+    multiplex:
+        launch:
+            - fictibot_controller/launch/multiplexer.launch
+        hpl:
+            properties: []
+nodes:
+    fictibot_drivers/fictibot_driver:
+        hpl:
+            properties:
+                - "globally: no /bumper {not data in [0 to 7]}"
+                - "globally: no /laser {not data in [0 to 127]}"
+                - "globally: no /wheel {not data in [0 to 15]}"
+                - "globally: some /bumper within 500 ms"
+                - "globally: some /laser within 500 ms"
+                - "globally: some /wheel within 500 ms"
+        user_data:
+            haros_plugin_pbt_gen:
+                extra_monitors: false
+    fictibot_controller/fictibot_controller:
+        hpl:
+            properties:
+                - "globally: /bumper {data != 0} causes /stop_cmd within 200 ms"
+                - "globally: /laser {data <= 50} causes /stop_cmd within 200 ms"
+                - "globally: /wheel {data in {3, 6, 7, 9, 10, 11, 12, 13, 14, 15}} causes /stop_cmd within 200 ms"
+                - "globally: no /controller_cmd {not data in ![-3.141593 to 3.141593]!}"
+        user_data:
+            haros_plugin_pbt_gen:
+                extra_monitors: false
+    fictibot_multiplex/fictibot_multiplex:
+        hpl:
+            properties:
+                - "globally: /high_priority_cmd as CMD causes /controller_cmd {data = @CMD.data} within 100 ms"
+                - "globally: /high_priority_stop causes /stop_cmd within 100 ms"
+                - "globally: /controller_cmd as CMD requires /normal_priority_cmd {data = @CMD.data} within 100 ms"
+                - "globally: /stop_cmd requires /high_priority_stop within 100 ms"
+                - "after /state {data > 0}: /controller_cmd as CMD requires /high_priority_cmd {data = @CMD.data} within 100 ms"
+                - "after /state {data > 0}: /stop_cmd requires /high_priority_stop within 100 ms"
+                - "after /state {data = 0} until /high_priority_cmd: /controller_cmd as CMD requires /normal_priority_cmd {data = @CMD.data} within 100 ms"
+                - "after /state {data = 0} until /high_priority_cmd: /stop_cmd requires /normal_priority_stop within 100 ms"
+                - "after /state {data < 0} until /high_priority_cmd: /controller_cmd as CMD requires /low_priority_cmd {data = @CMD.data} within 100 ms"
+                - "after /state {data < 0} until /high_priority_cmd: /stop_cmd requires /low_priority_stop within 100 ms"
+        user_data:
+            haros_plugin_pbt_gen:
+                extra_monitors: false
