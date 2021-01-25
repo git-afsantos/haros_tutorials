@@ -40,17 +40,24 @@ You have to create a `compile_commands.json` file in the `build` directory of th
 You can do it either with `catkin` or with `cmake`.
 
 ```bash
-cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-3.8 src
+cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-6.0 src
 ```
 
 Or
 
 ```bash
-catkin_make -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-3.8
+catkin_make -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-6.0
 ```
 
 Replace `src` in the first command with the source space of your workspace, if it is named differently.
-Replace `/usr/bin/clang++-3.8` with the correct path to your `clang++` version.
+Replace `/usr/bin/clang++-6.0` with the correct path to your `clang++` version.
+
+**Note:** it might be useful to turn this into a script and place it at the root of the workspace, so that you do not forget to update `compile_commands.json` when you build your ROS workspace.
+
+```bash
+#!/usr/bin/env bash
+catkin_make --force-cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-6.0
+```
 
 ## Standalone Usage
 
