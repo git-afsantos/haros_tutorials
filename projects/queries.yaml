@@ -1,4 +1,7 @@
 %YAML 1.1
+# This file defines architectural queries for some configurations of Fictibot,
+# to evaluate with the plugin `haros_plugin_pyflwor`.
+# plugin: https://github.com/git-afsantos/haros-plugin-pyflwor
 ---
 project: Fictibot
 packages:

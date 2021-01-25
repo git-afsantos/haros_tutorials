@@ -1,4 +1,8 @@
 %YAML 1.1
+# This file defines the ground truth of the `multiplex` computation graph,
+# to evaluate the HAROS model extractor's accuracy using the plugin
+# `haros_plugin_model_ged`.
+# plugin: https://github.com/git-afsantos/haros-plugin-model-ged
 ---
 project: Fictibot
 packages:

@@ -1,4 +1,5 @@
 %YAML 1.1
+# This file defines various configurations of Fictibot.
 ---
 project: Fictibot
 packages:

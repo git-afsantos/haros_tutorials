@@ -1,4 +1,8 @@
 %YAML 1.1
+# This file defines HPL properties for the various Fictibot nodes,
+# to generate tests with the plugin `haros_plugin_pbt_gen`.
+# plugin: https://github.com/git-afsantos/haros-plugin-pbt-gen
+# HPL reference: https://github.com/git-afsantos/hpl-specs
 ---
 project: Fictibot
 packages:
