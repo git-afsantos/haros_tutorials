@@ -51,7 +51,7 @@ void RandomController::spin()
 {
     ros::spinOnce();
 
-    bool prev_stop = stop_;
+    bool prev_stop; // = stop_;
     stop_counter_--;
 
     if (laser_proximity_)

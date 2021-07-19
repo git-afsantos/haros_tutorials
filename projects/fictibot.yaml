@@ -38,3 +38,8 @@ configurations:
     multiplex:
         launch:
             - fictibot_controller/launch/multiplexer.launch
+analysis:
+    ignore:
+        tags:
+            - formatting
+            - copyright
