@@ -106,6 +106,7 @@ void RandomController::spin()
 
 void RandomController::laser_callback(const std_msgs::Int8::ConstPtr& msg)
 {
+    // laser data in [0, 127] (cm)
     if (msg->data <= 50)
     {
         laser_proximity_ = true;
@@ -118,6 +119,11 @@ void RandomController::laser_callback(const std_msgs::Int8::ConstPtr& msg)
 
 void RandomController::bumper_callback(const std_msgs::Int8::ConstPtr& msg)
 {
+    // bumper data (8 bits):
+    // 0000 0LCR
+    // L:   left bumper (1 - pressed, 0 - released)
+    // C: center bumper (1 - pressed, 0 - released)
+    // R:  right bumper (1 - pressed, 0 - released)
     int left    = msg->data & 4;
     int center  = msg->data & 2;
     int right   = msg->data & 1;
@@ -149,6 +155,14 @@ void RandomController::bumper_callback(const std_msgs::Int8::ConstPtr& msg)
 
 void RandomController::wheel_callback(const std_msgs::Int8::ConstPtr& msg)
 {
+    // wheel data (8 bits):
+    // 0000 LLRR
+    // LL:  left wheel in [0, 3]
+    // RR: right wheel in [0, 3]
+    //  0: no drop (firm on the ground)
+    //  1: slight drop
+    //  2: significant drop
+    //  3: full drop (hanging in the air)
     int left = msg->data & 12;
     int right = msg->data & 3;
     if (left == 3)
