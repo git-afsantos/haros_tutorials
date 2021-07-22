@@ -49,6 +49,18 @@ void MotorManager::stop_callback(const std_msgs::Empty::ConstPtr& msg)
 }
 
 
+/**
+ * A stop command does not stop the robot immediately. It gradually reduces
+ *  the speed over a number of cycles, until the robot comes to a full stop.
+ * If there are no stop cycles to count, the robot should try to move.
+ * The `command_` tells the turning direction in radians.
+ *  `command_` == 0 means move forward, it should increase velocity, up to max.
+ *  `command_` < 0 means turning to the right.
+ *  `command_` > 0 means turning to the left.
+ *  `command_` beyond PI/8 means a hard turn, that should decrease velocity.
+ *      Only when fully stopped should the robot start turning, in this case.
+ *  To simulate turning, reduce `command_` by PI/64 per cycle, towards zero.
+ */
 void MotorManager::apply_commands()
 {
     teleop_priority_--;
