@@ -1,5 +1,6 @@
 
 #include <cstdlib>
+#include <std_msgs/Int8.h>
 
 #include "fictibot_multiplex/trichannel_multiplex.hpp"
 
@@ -12,24 +13,23 @@ TriChannelMultiplexer::TriChannelMultiplexer(ros::NodeHandle& n, double hz)
     , priority_cycles_(10)
     , inactivity_counter_(0)
 {
-    uint32_t queue_size = (uint32_t) hz * 2 + 1;
+    command_publisher_ = n.advertise<fictibot_msgs::VelocityCommand>("cmd_vel", 10);
+    stop_publisher_ = n.advertise<std_msgs::Empty>("cmd_stop", 10);
+    state_publisher_ = n.advertise<std_msgs::Int8>("state", 10);
 
-    command_publisher_ = n.advertise<std_msgs::Float64>("controller_cmd", queue_size);
-    stop_publisher_ = n.advertise<std_msgs::Empty>("stop_cmd", queue_size);
-    state_publisher_ = n.advertise<std_msgs::Int8>("state", queue_size);
-
-    high_cmd_subscriber_ = n.subscribe("high_priority_cmd", queue_size,
+    high_cmd_subscriber_ = n.subscribe("high_cmd_vel", 10,
             &TriChannelMultiplexer::high_cmd_callback, this);
-    high_stop_subscriber_ = n.subscribe("high_priority_stop", queue_size,
+    high_stop_subscriber_ = n.subscribe("high_cmd_stop", 10,
             &TriChannelMultiplexer::high_stop_callback, this);
-    normal_cmd_subscriber_ = n.subscribe("normal_priority_cmd", queue_size,
+    normal_cmd_subscriber_ = n.subscribe("normal_cmd_vel", 10,
             &TriChannelMultiplexer::normal_cmd_callback, this);
-    normal_stop_subscriber_ = n.subscribe("normal_priority_stop", queue_size,
+    normal_stop_subscriber_ = n.subscribe("normal_cmd_stop", 10,
             &TriChannelMultiplexer::normal_stop_callback, this);
-    low_cmd_subscriber_ = n.subscribe("low_priority_cmd", queue_size,
+    low_cmd_subscriber_ = n.subscribe("low_cmd_vel", 10,
             &TriChannelMultiplexer::low_cmd_callback, this);
-    low_stop_subscriber_ = n.subscribe("low_priority_stop", queue_size,
+    low_stop_subscriber_ = n.subscribe("low_cmd_stop", 10,
             &TriChannelMultiplexer::low_stop_callback, this);
+
     std_msgs::Int8 state_msg;
     state_msg.data = (int8_t) LOW_PRIORITY;
     state_publisher_.publish(state_msg);
@@ -48,12 +48,10 @@ void TriChannelMultiplexer::spin()
         state_msg.data = (int8_t) LOW_PRIORITY;
         state_publisher_.publish(state_msg);
     }
-
-    ros::spinOnce();
 }
 
 
-void TriChannelMultiplexer::high_cmd_callback(const std_msgs::Float64::ConstPtr& msg)
+void TriChannelMultiplexer::high_cmd_callback(const fictibot_msgs::VelocityCommand::ConstPtr& msg)
 {
     command_publisher_.publish(msg);
     channel_ = HIGH_PRIORITY;
@@ -73,7 +71,7 @@ void TriChannelMultiplexer::high_stop_callback(const std_msgs::Empty::ConstPtr& 
     state_publisher_.publish(state_msg);
 }
 
-void TriChannelMultiplexer::normal_cmd_callback(const std_msgs::Float64::ConstPtr& msg)
+void TriChannelMultiplexer::normal_cmd_callback(const fictibot_msgs::VelocityCommand::ConstPtr& msg)
 {
     if (channel_ != HIGH_PRIORITY)
     {
@@ -99,7 +97,7 @@ void TriChannelMultiplexer::normal_stop_callback(const std_msgs::Empty::ConstPtr
     }
 }
 
-void TriChannelMultiplexer::low_cmd_callback(const std_msgs::Float64::ConstPtr& msg)
+void TriChannelMultiplexer::low_cmd_callback(const fictibot_msgs::VelocityCommand::ConstPtr& msg)
 {
     if (channel_ == LOW_PRIORITY)
     {

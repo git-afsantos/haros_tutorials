@@ -3,7 +3,7 @@
 
 #include <ros/ros.h>
 #include <std_msgs/Empty.h>
-#include <std_msgs/Float64.h>
+#include <fictibot_msgs/VelocityCommand.h>
 
 class MotorManager
 {
@@ -16,20 +16,21 @@ public:
     void spin();
 
 private:
-    int teleop_priority_, stop_cycles_;
-    double command_, velocity_;
+    double delta_t_;
+    double stop_time_;
+    double timer_stop_;
 
-    ros::Subscriber teleop_subscriber_, controller_subscriber_,
-                    stop_subscriber_;
+    fictibot_msgs::VelocityCommand command_;
+    fictibot_msgs::VelocityCommand velocity_;
 
+    ros::Subscriber stop_subscriber_;
+    ros::Subscriber cmd_subscriber_;
+    ros::Publisher vel_publisher_;
 
-    void teleop_callback(const std_msgs::Float64::ConstPtr& msg);
-
-    void controller_callback(const std_msgs::Float64::ConstPtr& msg);
 
     void stop_callback(const std_msgs::Empty::ConstPtr& msg);
 
-    void apply_commands();
+    void velocity_callback(const fictibot_msgs::VelocityCommand::ConstPtr& msg);
 };
 
 #endif /*MOTOR_MANAGER_H_*/

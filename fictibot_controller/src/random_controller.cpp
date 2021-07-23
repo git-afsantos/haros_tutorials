@@ -4,102 +4,73 @@
 #include <math.h>
 #include <cstdlib>
 #include <std_msgs/Empty.h>
-#include <std_msgs/Float64.h>
+#include <fictibot_msgs/VelocityCommand.h>
 
 #include "fictibot_controller/random_controller.h"
 
 RandomController::RandomController(ros::NodeHandle& n, double hz)
-    : stop_(false)
+    : timer_(0.0)
     , laser_proximity_(false)
     , bumper_left_pressed_(false)
     , bumper_center_pressed_(false)
     , bumper_right_pressed_(false)
     , wheel_left_dropped_(false)
     , wheel_right_dropped_(false)
-    , stop_counter_(0)
 {
-    stop_cycles_ = 2 * hz + 1;
+    delta_t_ = 1.0 / hz;
+    n.param<double>("~change_time", change_time_, 5.0);
 
-    uint32_t queue_size    = (uint32_t) hz * 2 + 1;
+    command_publisher_ = n.advertise<fictibot_msgs::VelocityCommand>("/cmd_vel", 1);
 
-    std::string some_param;
-    n.param<std::string>("param", some_param, "nothing");
-    n.setParam("set_param", some_param);
-
-    command_publisher_     = n.advertise<std_msgs::Float64>("controller_cmd",
-                                                            1);
-    stop_publisher_        = n.advertise<std_msgs::Empty>("/stop_cmd",
-                                                          0);
-
-    laser_subscriber_      = n.subscribe("laser", queue_size,
+    laser_subscriber_ = n.subscribe("laser", 10,
             &RandomController::laser_callback, this);
-    bumper_subscriber_     = n.subscribe("bumper", queue_size,
+    bumper_subscriber_ = n.subscribe("bumper", 10,
             &RandomController::bumper_callback, this);
-    wheel_drop_subscriber_ = n.subscribe("wheel", queue_size,
+    wheel_drop_subscriber_ = n.subscribe("wheel", 10,
             &RandomController::wheel_callback, this);
-    if (some_param == "nothing") {
-        custom_subscriber_ = n.subscribe("custom_noparam", queue_size,
-                &RandomController::custom_callback, this);
-    } else {
-        custom_subscriber_ = n.subscribe("custom_w_param", queue_size,
-                &RandomController::custom_callback, this);
-    }
 }
 
 
 void RandomController::spin()
 {
-    ros::spinOnce();
-
-    bool prev_stop; // = stop_;
-    stop_counter_--;
-
+    bool obstacle;
     if (laser_proximity_)
     {
-        stop_ = true;
+        obstacle = true;
     }
     else if (bumper_left_pressed_)
     {
-        stop_ = true;
+        obstacle = true;
     }
     else if (bumper_center_pressed_)
     {
-        stop_ = true;
+        obstacle = true;
     }
     else if (bumper_right_pressed_)
     {
-        stop_ = true;
+        obstacle = true;
     }
     else if (wheel_left_dropped_)
     {
-        stop_ = true;
+        obstacle = true;
     }
     else if (wheel_right_dropped_)
     {
-        stop_ = true;
-    }
-    else
-    {
-        stop_ = false;
+        obstacle = true;
     }
 
-    if (!prev_stop && stop_)
+    if (timer_ > 0.0)
     {
-        std_msgs::Empty stop_msg;
-        stop_publisher_.publish(stop_msg);
+        timer_ -= delta_t_;
+    }
 
-        stop_counter_ = stop_cycles_;
-        std_msgs::Float64 vel_msg;
-        vel_msg.data = (double) (std::rand() % 360 - 180) * M_PI / 180.0;
+    if (obstacle || timer_ <= 0.0)
+    {
+        fictibot_msgs::VelocityCommand vel_msg;
+        vel_msg.linear = (double) (std::rand() % 2000 - 1000) / 1000.0;
+        vel_msg.angular = (double) (std::rand() % 360 - 180) * M_PI / 180.0;
         command_publisher_.publish(vel_msg);
-    }
-
-    if (stop_ && stop_counter_ < 0)
-    {
-        stop_counter_ = stop_cycles_;
-        std_msgs::Float64 vel_msg;
-        vel_msg.data = (double) (std::rand() % 360 - 180) * M_PI / 180.0;
-        command_publisher_.publish(vel_msg);
+        timer_ = change_time_;
     }
 }
 
@@ -117,17 +88,9 @@ void RandomController::laser_callback(const std_msgs::Int8::ConstPtr& msg)
     }
 }
 
-void RandomController::bumper_callback(const std_msgs::Int8::ConstPtr& msg)
+void RandomController::bumper_callback(const fictibot_msgs::BumperEvent::ConstPtr& msg)
 {
-    // bumper data (8 bits):
-    // 0000 0LCR
-    // L:   left bumper (1 - pressed, 0 - released)
-    // C: center bumper (1 - pressed, 0 - released)
-    // R:  right bumper (1 - pressed, 0 - released)
-    int left    = msg->data & 4;
-    int center  = msg->data & 2;
-    int right   = msg->data & 1;
-    if (left)
+    if (msg->left)
     {
         bumper_left_pressed_ = true;
     }
@@ -135,7 +98,7 @@ void RandomController::bumper_callback(const std_msgs::Int8::ConstPtr& msg)
     {
         bumper_left_pressed_ = false;
     }
-    if (center)
+    if (msg->center)
     {
         bumper_center_pressed_ = true;
     }
@@ -143,7 +106,7 @@ void RandomController::bumper_callback(const std_msgs::Int8::ConstPtr& msg)
     {
         bumper_center_pressed_ = false;
     }
-    if (right)
+    if (msg->right)
     {
         bumper_right_pressed_ = true;
     }
@@ -153,46 +116,23 @@ void RandomController::bumper_callback(const std_msgs::Int8::ConstPtr& msg)
     }
 }
 
-void RandomController::wheel_callback(const std_msgs::Int8::ConstPtr& msg)
+void RandomController::wheel_callback(const fictibot_msgs::WheelDropEvent::ConstPtr& msg)
 {
-    // wheel data (8 bits):
-    // 0000 LLRR
-    // LL:  left wheel in [0, 3]
-    // RR: right wheel in [0, 3]
-    //  0: no drop (firm on the ground)
-    //  1: slight drop
-    //  2: significant drop
-    //  3: full drop (hanging in the air)
-    int left = msg->data & 12;
-    int right = msg->data & 3;
-    if (left == 3)
+    if (msg->left)
     {
         wheel_left_dropped_ = true;
     }
-    else if (left == 2 && right >= 1)
-    {
-        wheel_left_dropped_ = true;
-    }
-    else if (left < 2)
+    else
     {
         wheel_left_dropped_ = false;
     }
 
-    if (right == 3)
+    if (msg->right)
     {
         wheel_right_dropped_ = true;
     }
-    else if (right == 2 && left >= 1)
-    {
-        wheel_right_dropped_ = true;
-    }
-    else if (right < 2)
+    else
     {
         wheel_right_dropped_ = false;
     }
-}
-
-void RandomController::custom_callback(const fictibot_msgs::Custom::ConstPtr& msg)
-{
-    ROS_INFO("Received custom message!");
 }

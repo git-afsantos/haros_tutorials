@@ -13,6 +13,8 @@ int main(int argc, char **argv)
 
     while (ros::ok())
     {
+        ros::spinOnce();
+
         controller.spin();
 
         loop_rate.sleep();

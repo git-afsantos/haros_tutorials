@@ -14,8 +14,9 @@ public:
     void spin();
 
 private:
-    ros::Publisher bumper_publisher_, laser_publisher_,
-                   wheel_drop_publisher_;
+    ros::Publisher bumper_publisher_;
+    ros::Publisher laser_publisher_;
+    ros::Publisher wheel_drop_publisher_;
 
     int8_t read_bumper();
 
