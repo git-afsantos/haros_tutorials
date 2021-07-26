@@ -14,6 +14,10 @@ public:
     void spin();
 
 private:
+    double delta_t_;
+    double internal_timer_;
+    bool facing_obstacle_;
+
     ros::Publisher bumper_publisher_;
     ros::Publisher laser_publisher_;
     ros::Publisher wheel_drop_publisher_;
