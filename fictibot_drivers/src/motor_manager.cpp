@@ -21,7 +21,7 @@ MotorManager::MotorManager(ros::NodeHandle& n, double hz)
     : timer_stop_(0.0)
 {
     delta_t_ = 1.0 / hz;
-    n.param<double>("~stop_time", stop_time_, STOP_TIME);
+    n.param<double>("stop_time", stop_time_, STOP_TIME);
     stop_subscriber_ = n.subscribe("cmd_stop", 1,
             &MotorManager::stop_callback, this);
     cmd_subscriber_ = n.subscribe("cmd_vel", 10,
