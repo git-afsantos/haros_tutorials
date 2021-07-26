@@ -18,7 +18,7 @@ RandomController::RandomController(ros::NodeHandle& n, double hz)
     , wheel_right_dropped_(false)
 {
     delta_t_ = 1.0 / hz;
-    n.param<double>("~change_time", change_time_, 5.0);
+    n.param<double>("change_time", change_time_, 5.0);
 
     command_publisher_ = n.advertise<fictibot_msgs::VelocityCommand>("/cmd_vel", 1);
 
