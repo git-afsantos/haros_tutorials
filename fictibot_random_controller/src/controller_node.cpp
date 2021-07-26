@@ -1,6 +1,6 @@
 #include <ros/ros.h>
 
-#include "fictibot_controller/random_controller.h"
+#include "fictibot_random_controller/random_controller.h"
 
 int main(int argc, char **argv)
 {

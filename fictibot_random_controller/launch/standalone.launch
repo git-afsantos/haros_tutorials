@@ -1,0 +1,3 @@
+<launch>
+  <node name="ficticontrol" pkg="fictibot_random_controller" type="fictibot_random_controller" />
+</launch>

@@ -1,0 +1,11 @@
+<launch>
+  <machine name="mech1" address="127.0.0.1" default="false" />
+  <machine name="mech1" address="127.0.0.1" default="true" />
+
+  <group>
+    <!-- <machine name="willow" address="blah.willowgarage.com" default="true" /> -->
+  </group>
+
+  <node name="fictibase" pkg="fictibot_drivers" type="fictibot_driver" />
+  <node name="ficticontrol" pkg="fictibot_controller" type="fictibot_controller" />
+</launch>

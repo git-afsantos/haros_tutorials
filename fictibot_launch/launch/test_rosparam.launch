@@ -26,6 +26,8 @@
 ~p/z: 1
 }-->
 <launch>
+  <param name="a1" type="yaml" value="{b1: 1, /c1: 1, ~d1: 1}" />
+
   <rosparam command="delete" param="~AA"/>  <!--deletes "/rosparam/AA"-->
   <rosparam ns="~ns" param="p">{a: 1}</rosparam>
   <rosparam ns="ns" param="~p">{b: 1}</rosparam>

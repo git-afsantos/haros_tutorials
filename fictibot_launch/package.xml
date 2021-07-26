@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package>
+  <name>fictibot_launch</name>
+  <version>0.3.0</version>
+  <description>The fictibot_launch package</description>
+
+  <maintainer email="andre@todo.todo">Andre Santos</maintainer>
+  <license>MIT</license>
+  <author email="andre@todo.todo">Andre Santos</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>roscpp</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>fictibot_msgs</run_depend>
+  <run_depend>fictibot_drivers</run_depend>
+  <run_depend>fictibot_multiplex</run_depend>
+  <run_depend>fictibot_random_controller</run_depend>
+  <run_depend>fictibot_safety_controller</run_depend>
+
+  <export>
+  </export>
+</package>

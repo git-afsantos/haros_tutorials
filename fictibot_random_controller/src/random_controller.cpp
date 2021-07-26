@@ -6,7 +6,7 @@
 #include <std_msgs/Empty.h>
 #include <fictibot_msgs/VelocityCommand.h>
 
-#include "fictibot_controller/random_controller.h"
+#include "fictibot_random_controller/random_controller.h"
 
 RandomController::RandomController(ros::NodeHandle& n, double hz)
     : timer_(0.0)

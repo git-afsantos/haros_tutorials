@@ -1,17 +1,17 @@
-#ifndef RANDOM_CONTROLLER_H_
-#define RANDOM_CONTROLLER_H_
+#ifndef SAFETY_CONTROLLER_H_
+#define SAFETY_CONTROLLER_H_
 
 #include <ros/ros.h>
 #include <std_msgs/Int8.h>
 #include <fictibot_msgs/BumperEvent.h>
 #include <fictibot_msgs/WheelDropEvent.h>
 
-class RandomController
+class SafetyController
 {
 public:
-    RandomController(ros::NodeHandle& n, double hz);
+    SafetyController(ros::NodeHandle& n, double hz);
 
-    ~RandomController(){};
+    ~SafetyController(){};
 
 
     void spin();
@@ -19,15 +19,11 @@ public:
 private:
     double delta_t_;
     double timer_;
-    double change_time_;
+    double reaction_time_;
 
-    bool laser_proximity_;
-    bool bumper_left_pressed_;
-    bool bumper_center_pressed_;
-    bool bumper_right_pressed_;
-    bool wheel_left_dropped_;
-    bool wheel_right_dropped_;
+    bool safe_;
 
+    ros::Publisher stop_publisher_;
     ros::Publisher command_publisher_;
 
     ros::Subscriber laser_subscriber_;
@@ -40,6 +36,10 @@ private:
     void bumper_callback(const fictibot_msgs::BumperEvent::ConstPtr& msg);
 
     void wheel_callback(const fictibot_msgs::WheelDropEvent::ConstPtr& msg);
+
+    void emergency_stop();
+
+    void slow_down();
 };
 
-#endif /*RANDOM_CONTROLLER_H_*/
+#endif /*SAFETY_CONTROLLER_H_*/

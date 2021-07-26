@@ -1,0 +1,3 @@
+<launch>
+  <node name="fictisafety" pkg="fictibot_safety_controller" type="fictibot_safety_controller" />
+</launch>

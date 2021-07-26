@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(fictibot_controller)
+project(fictibot_safety_controller)
 
 find_package(catkin REQUIRED COMPONENTS roscpp rospy std_msgs fictibot_msgs)
 
@@ -17,17 +17,17 @@ catkin_package(
 
 include_directories(include ${catkin_INCLUDE_DIRS})
 
-add_executable(fictibot_controller
+add_executable(fictibot_safety_controller
   src/controller_node.cpp
-  src/random_controller.cpp
+  src/safety_controller.cpp
 )
 
-add_dependencies(fictibot_controller
+add_dependencies(fictibot_safety_controller
   ${${PROJECT_NAME}_EXPORTED_TARGETS} 
   ${catkin_EXPORTED_TARGETS}
 )
 
-target_link_libraries(fictibot_controller ${catkin_LIBRARIES})
+target_link_libraries(fictibot_safety_controller ${catkin_LIBRARIES})
 
 #############
 ## Install ##
