@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(fictibot_launch)
 
-find_package(catkin)
+find_package(catkin REQUIRED)
 
 ###################################
 ## catkin specific configuration ##
