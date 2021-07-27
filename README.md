@@ -6,8 +6,8 @@ This is a repository with example code to try out the various features of the [H
 
 This repository contains ROS packages that serve no particular purpose, other than to try out HAROS.
 The `minimal_example` package is a minimal ROS package composed of two nodes with a ROS publisher, a ROS subscriber, a ROS service server, a ROS service client and a ROS parameter.
-The remaining four packages, `fictibot_drivers`, `fictibot_controller`, `fictibot_multiplex` and `fictibot_msgs` make up a fictitious mobile robot system, called Fictibot.
-The packages provide software drivers for the mobile base, a random walker controller, a multiplexer to filter commands by priority and message definitions, respectively.
+The remaining `fictibot_*` packages make up a fictitious mobile robot system, called *Fictibot*.
+The packages provide software drivers for the mobile base, a random walker controller, a safety controller, a multiplexer to filter commands by priority, and message definitions.
 Despite being a fictitious robot, the system can be executed normally, using `rosrun`, or `roslaunch` with the various launch files contained in the packages.
 
 In addition to the ROS packages, this repository also contains [example project files for HAROS](./projects) and [scripts](./scripts) to help execute HAROS.
@@ -64,22 +64,22 @@ catkin_make --force-cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_CXX_COMPILER
 To try out the ROS packages on their own, use any of the provided launch files.
 They set up different use scenarios, sometimes showcasing some ROS features and quirks that might not be well known.
 
-A normal use case, using the three Fictibot nodes:
+A normal use case, using the Fictibot nodes:
 
 ```bash
-roslaunch fictibot_controller multiplexer.launch
+roslaunch fictibot_launch safe_random_walker.launch
 ```
 
 Two Fictibot systems at the same time:
 
 ```bash
-roslaunch fictibot_controller dual_bots.launch
+roslaunch fictibot_launch dual_bots.launch
 ```
 
 Some quirks with `rosparam` that might not be obvious from the documentation (read the launch file's comments as well):
 
 ```bash
-roslaunch fictibot_controller test_rosparam.launch
+roslaunch minimal_example test_rosparam.launch
 ```
 
 ## Usage With HAROS
@@ -91,7 +91,7 @@ Alternatively, feel free to use some pre-made [scripts](./scripts) that test out
 - [`scripts/fictibot.sh`](./scripts/fictibot.sh) runs model extraction on various configurations of Fictibot and any available plugins.
 - [`scripts/queries.sh`](./scripts/queries.sh) defines architectural queries for some configurations of Fictibot and executes [`haros_plugin_pyflwor`](https://github.com/git-afsantos/haros-plugin-pyflwor).
 - [`scripts/hpl.sh`](./scripts/hpl.sh) defines [HPL properties](https://github.com/git-afsantos/hpl-specs) for the various Fictibot nodes and runs test generation with [`haros_plugin_pbt_gen`](https://github.com/git-afsantos/haros-plugin-pbt-gen).
-- [`scripts/perf.sh`](./scripts/perf.sh) defines the ground truth of the `multiplex` computation graph and evaluates the model extractor's accuracy with [`haros_plugin_model_ged`](https://github.com/git-afsantos/haros-plugin-model-ged).
+- [`scripts/perf.sh`](./scripts/perf.sh) defines the ground truth of a Fictibot computation graph and evaluates the model extractor's accuracy with [`haros_plugin_model_ged`](https://github.com/git-afsantos/haros-plugin-model-ged).
 
 ## Bugs, Questions and Support
 
