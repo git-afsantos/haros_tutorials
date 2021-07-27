@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>fictibot</name>
+  <version>0.3.0</version>
+  <description>The fictibot metapackage</description>
+
+  <maintainer email="andre@todo.todo">Andre Santos</maintainer>
+  <license>MIT</license>
+  <author email="andre@todo.todo">Andre Santos</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <exec_depend>fictibot_msgs</exec_depend>
+  <exec_depend>fictibot_drivers</exec_depend>
+  <exec_depend>fictibot_random_controller</exec_depend>
+  <exec_depend>fictibot_safety_controller</exec_depend>
+  <exec_depend>fictibot_multiplex</exec_depend>
+  <exec_depend>fictibot_launch</exec_depend>
+
+  <export>
+    <metapackage />
+  </export>
+</package>
