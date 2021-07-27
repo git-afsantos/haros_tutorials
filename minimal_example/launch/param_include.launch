@@ -1,0 +1,33 @@
+<launch>
+  <arg name="arg1" />
+
+  <param name="~level1" value="1" />
+  <param name="frequency" type="double" value="1" />
+  <node name="listener" pkg="minimal_example" type="subscriber" output="screen" />
+  <node name="talker" pkg="minimal_example" type="publisher" args="frequency" output="screen">
+    <remap from="monologue" to="chatter" />
+  </node>
+
+  <group>
+    <arg name="arg2" value="~level2" />
+    <param name="$(arg arg2)" value="2" />
+    <node name="sub1" pkg="minimal_example" type="subscriber" />
+    <include file="$(find minimal_example)/launch/params.launch" ns="/ns1" />
+  </group>
+
+  <group>
+    <arg name="arg2" value="2" />
+    <param name="arg_param" value="$(arg arg2)" />
+  </group>
+
+  <node name="sub2" pkg="minimal_example" type="subscriber">
+    <param name="param1" value="1" />
+    <param name="~param2" value="2" />
+  </node>
+
+  <param name="~level1_2" value="1" />
+
+  <node name="pub1" pkg="minimal_example" type="publisher" />
+
+  <include file="$(find minimal_example)/launch/params.launch" ns="/ns2" />
+</launch>

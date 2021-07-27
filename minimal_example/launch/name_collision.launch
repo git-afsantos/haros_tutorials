@@ -1,0 +1,8 @@
+<launch>
+  <param name="node" value="1" />
+
+  <node name="node" pkg="minimal_example" type="subscriber" output="screen">
+    <remap from="chatter" to="node" />
+    <remap from="counter" to="node" />
+  </node>
+</launch>

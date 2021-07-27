@@ -1,0 +1,11 @@
+<launch>
+  <remap from="monologue" to="temp" />
+
+  <param name="frequency" type="double" value="1" />
+
+  <node name="listener" pkg="minimal_example" type="subscriber" output="screen" />
+
+  <node name="talker" pkg="minimal_example" type="publisher" args="frequency" output="screen">
+    <remap from="monologue" to="chatter" />
+  </node>
+</launch>

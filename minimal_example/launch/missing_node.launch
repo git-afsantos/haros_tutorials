@@ -1,0 +1,7 @@
+<launch>
+  <node name="listener" pkg="minimal_example" type="subscriber" output="screen" />
+
+  <node name="node" pkg="unknown" type="unknown">
+    <param name="private" value="secret" />
+  </node>
+</launch>

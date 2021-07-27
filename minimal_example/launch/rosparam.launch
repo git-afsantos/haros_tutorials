@@ -8,8 +8,10 @@
   <rosparam ns="ns">{d: 4}</rosparam>
   <rosparam ns="ns" param="p">{/b: 2}</rosparam>
 
-  <node name="fictibase" pkg="fictibot_drivers" type="fictibot_driver" />
-  <node name="ficticontrol" pkg="fictibot_controller" type="fictibot_controller">
+  <param name="frequency" type="double" value="1" />
+  <node name="listener" pkg="minimal_example" type="subscriber" output="screen" />
+  <node name="talker" pkg="minimal_example" type="publisher" args="frequency" output="screen">
+    <remap from="monologue" to="chatter" />
     <rosparam ns="ns" param="p">{e: 5, f: 6}</rosparam>
     <rosparam ns="ns" param="e">5</rosparam>
     <rosparam>{e: 5, f: 6}</rosparam>
