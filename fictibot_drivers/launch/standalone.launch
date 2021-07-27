@@ -1,0 +1,3 @@
+<launch>
+  <node name="fictibase" pkg="fictibot_drivers" type="fictibot_driver" />
+</launch>
