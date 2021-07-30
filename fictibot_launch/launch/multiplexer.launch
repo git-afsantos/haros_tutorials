@@ -4,12 +4,10 @@
   <node name="fictiplex" pkg="fictibot_multiplex" type="fictibot_multiplex" />
 
   <node name="ficticontrol" pkg="fictibot_random_controller" type="fictibot_random_controller">
-    <remap from="cmd_vel" to="normal_cmd_vel" />
-    <remap from="/cmd_stop" to="normal_cmd_stop" />
   </node>
 
   <node name="fictisafe" pkg="fictibot_safety_controller" type="fictibot_safety_controller">
     <remap from="cmd_vel" to="high_cmd_vel" />
-    <remap from="cmd_stop" to="high_cmd_stop" />
+    <remap from="cmd_stop" to="high_cmd_vel" />
   </node>
 </launch>
