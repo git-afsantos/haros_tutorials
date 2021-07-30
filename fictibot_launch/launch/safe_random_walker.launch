@@ -3,17 +3,18 @@
   <param name="change_time" type="double" value="3.0" />
   <param name="reaction_time" type="double" value="2.0" />
 
-  <node name="fictibase" pkg="fictibot_drivers" type="fictibot_driver" />
+  <group ns="fictibot">
+    <node name="base" pkg="fictibot_drivers" type="fictibot_driver" />
 
-  <node name="fictiplex" pkg="fictibot_multiplex" type="fictibot_multiplex" />
+    <node name="multiplex" pkg="fictibot_multiplex" type="fictibot_multiplex" />
 
-  <node name="ficticontrol" pkg="fictibot_random_controller" type="fictibot_random_controller">
-    <remap from="cmd_vel" to="normal_cmd_vel" />
-    <remap from="/cmd_stop" to="normal_cmd_stop" />
-  </node>
+    <node name="control" pkg="fictibot_random_controller" type="fictibot_random_controller">
+      <remap from="cmd_vel" to="normal_cmd_vel" />
+    </node>
 
-  <node name="fictisafe" pkg="fictibot_safety_controller" type="fictibot_safety_controller">
-    <remap from="cmd_vel" to="high_cmd_vel" />
-    <remap from="cmd_stop" to="high_cmd_stop" />
-  </node>
+    <node name="safety" pkg="fictibot_safety_controller" type="fictibot_safety_controller">
+      <remap from="cmd_vel" to="high_cmd_vel" />
+      <remap from="cmd_stop" to="high_cmd_stop" />
+    </node>
+  </group>
 </launch>
