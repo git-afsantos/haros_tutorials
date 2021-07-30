@@ -6,15 +6,54 @@
 project: Fictibot
 packages:
     - fictibot_drivers
-    - fictibot_controller
+    - fictibot_random_controller
+    - fictibot_safety_controller
     - fictibot_multiplex
     - fictibot_msgs
+    - fictibot_launch
 configurations:
-    missing_remap:
+    minimal:
         launch:
-            - fictibot_controller/launch/missing_remap.launch
+            - fictibot_launch/launch/minimal.launch
         user_data:
             haros_plugin_pyflwor:
+                - name: Query 6 - One Publisher Per Topic
+                  details: "Found {n} publishers on a single topic - {entities}"
+                  query: "topics[len(self.publishers) > 1]"
+    dual_bots:
+        launch:
+            - fictibot_launch/launch/dual_bots.launch
+        user_data:
+            haros_plugin_pyflwor:
+                - name: Query 6 - One Publisher Per Topic
+                  details: "Found {n} publishers on a single topic - {entities}"
+                  query: "topics[len(self.publishers) > 1]"
+    safe_random_walker:
+        launch:
+            - fictibot_launch/launch/safe_random_walker.launch
+        user_data:
+            haros_plugin_pyflwor:
+                - name: Query 6 - One Publisher Per Topic
+                  details: "Found {n} publishers on a single topic - {entities}"
+                  query: "topics[len(self.publishers) > 1]"
+    type_check:
+        launch:
+            - fictibot_launch/launch/type_check.launch
+        user_data:
+            haros_plugin_pyflwor:
+                - name: Query 3 - Message Types Must Match
+                  details: "Found two participants on the same topic with
+                            mismatching message types - {entities}"
+                  query: "for p in <nodes/publishers | nodes/subscribers>,
+                              q in <nodes/publishers | nodes/subscribers>
+                          where p.topic_name == q.topic_name and p.type != q.type
+                          return p, q"
+                - name: Query 1 - One Publisher Per Topic
+                  details: "Found {n} publishers on a single topic - {entities}"
+                  query: "topics[len(self.publishers) > 1]"
+                - name: Query 2 - Message Types Must Match
+                  details: "Found {n} topics with multiple message types - {entities}"
+                  query: "topics[len(self.types) > 1]"
                 - name: Query 7 - No Disconnected Similar Topics
                   details: "Found two topics with similar names and type,
                             but they are not connected. It could be a missing
@@ -29,29 +68,9 @@ configurations:
                               or sub.rosname.full.endswith(pub.rosname.own)
                               or pub.rosname.given == sub.rosname.given)
                           return 'pub':pub, 'sub':sub"
-    name_collision:
-        launch:
-            - fictibot_controller/launch/name_collision.launch
-        user_data:
-            haros_plugin_pyflwor:
-                - name: Query 6 - One Publisher Per Topic
-                  details: "Found {n} publishers on a single topic - {entities}"
-                  query: "topics[len(self.publishers) > 1]"
-    type_check:
-        launch:
-            - fictibot_controller/launch/type_check.launch
-        user_data:
-            haros_plugin_pyflwor:
-                - name: Query 3 - Message Types Must Match
-                  details: "Found two participants on the same topic with
-                            mismatching message types - {entities}"
-                  query: "for p in <nodes/publishers | nodes/subscribers>,
-                              q in <nodes/publishers | nodes/subscribers>
-                          where p.topic_name == q.topic_name and p.type != q.type
-                          return p, q"
     multiplex:
         launch:
-            - fictibot_controller/launch/multiplexer.launch
+            - fictibot_launch/launch/multiplexer.launch
         user_data:
             haros_plugin_pyflwor:
                 - name: Query 1 - Avoid Using Global Names
@@ -103,3 +122,10 @@ configurations:
                 - name: Query 8 - Uses of std_msgs/Empty
                   details: "Found {n} topics of type std_msgs/Empty - {entities}"
                   query: "topics[self.type == 'std_msgs/Empty']"
+analysis:
+    ignore:
+        tags:
+            - formatting
+            - copyright
+            - metrics
+            - integer-types
