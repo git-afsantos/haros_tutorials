@@ -1,8 +1,7 @@
 <launch>
-  <node name="fictibase" pkg="fictibot_drivers" type="fictibot_driver">
-  </node>
+  <node name="fictibase" pkg="fictibot_drivers" type="fictibot_driver" />
 
-  <node name="ficticontrol" pkg="fictibot_safety_controller" type="fictibot_safety_controller">
+  <node name="fictisafe" pkg="fictibot_safety_controller" type="fictibot_safety_controller">
     <remap from="cmd_stop" to="cmd_vel" />
   </node>
 </launch>
