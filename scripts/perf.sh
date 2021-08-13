@@ -23,4 +23,4 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 cd $DIR/../projects
 
-haros full -n -w $PLUGIN -p perf.yaml
+haros full --server-host 0.0.0.0:8080 -n -w $PLUGIN -p perf.yaml

@@ -13,4 +13,4 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 cd $DIR/../projects
 
-haros full -n -p minimal.yaml
+haros full --server-host 0.0.0.0:8080 -n -p minimal.yaml
