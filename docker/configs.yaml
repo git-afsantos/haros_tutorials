@@ -1,0 +1,15 @@
+%YAML 1.1
+---
+workspace: "/root/ws"
+environment: null
+plugin_blacklist: []
+cpp:
+  parser_lib: "/usr/lib/llvm-10/lib"
+  std_includes: "/usr/lib/llvm-10/lib/clang/10.0.0/include"
+  compile_db: "/root/ws/build"
+analysis:
+  ignore:
+    tags: []
+    rules: []
+    metrics: []
+
