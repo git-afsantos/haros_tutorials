@@ -33,14 +33,12 @@ ENV CMAKE_CXX_COMPILER=/usr/lib/llvm-10/bin/clang++
 
 RUN mkdir -p /root/ws/src
 
-COPY catkin.sh /root/ws
-
-# WORKDIR /root/ws/src
+WORKDIR /root/ws/src
 
 
-# ARG TUTORIAL_VER=latest
+ARG TUTORIAL_VER=latest
 
-# RUN git clone https://github.com/git-afsantos/haros_tutorials.git
+RUN git clone https://github.com/git-afsantos/haros_tutorials.git
 
 WORKDIR /root/ws
 
