@@ -42,16 +42,9 @@ void SafetyController::laser_callback(const std_msgs::Int8::ConstPtr& msg)
     if (!safe_) { return; }
 
     // laser data in [0, 127] (cm)
-    if (msg->data <= 32)
+    if (msg->data <= 64)
     {
-        emergency_stop();
-    }
-    else
-    {
-        if (msg->data <= 64)
-        {
-            slow_down();
-        }
+        slow_down();
     }
 }
 
