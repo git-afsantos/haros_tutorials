@@ -13,4 +13,4 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 cd $DIR/../projects
 
-haros full --server-host 0.0.0.0:8080 -n -w haros_plugin_cppcheck -w haros_plugin_lizard -w haros_plugin_pyflwor -w haros_plugin_pbt_gen -p fictibot.yaml
+haros full --server-host 0.0.0.0:8080 -n -w haros_plugin_cppcheck haros_plugin_lizard haros_plugin_pyflwor haros_plugin_pbt_gen -p fictibot.yaml
