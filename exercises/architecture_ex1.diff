@@ -1,0 +1,13 @@
+diff --git a/src/fictibot_random_controller/src/random_controller.cpp b/src/fictibot_random_controller/src/random_controller.cpp
+index 41401be..0cfdc11 100644
+--- a/src/fictibot_random_controller/src/random_controller.cpp
++++ b/src/fictibot_random_controller/src/random_controller.cpp
+@@ -20,7 +20,7 @@ RandomController::RandomController(ros::NodeHandle& n, double hz)
+     delta_t_ = 1.0 / hz;
+     n.param<double>("change_time", change_time_, 5.0);
+ 
+-    command_publisher_ = n.advertise<fictibot_msgs::VelocityCommand>("/cmd_vel", 1);
++    command_publisher_ = n.advertise<fictibot_msgs::VelocityCommand>("cmd_vel", 1);
+ 
+     laser_subscriber_ = n.subscribe("laser", 10,
+             &RandomController::laser_callback, this);

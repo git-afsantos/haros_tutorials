@@ -1,0 +1,13 @@
+diff --git a/src/fictibot_random_controller/src/random_controller.cpp b/src/fictibot_random_controller/src/random_controller.cpp
+index ad33984..41401be 100644
+--- a/src/fictibot_random_controller/src/random_controller.cpp
++++ b/src/fictibot_random_controller/src/random_controller.cpp
+@@ -33,7 +33,7 @@ RandomController::RandomController(ros::NodeHandle& n, double hz)
+ 
+ void RandomController::spin()
+ {
+-    bool obstacle;
++    bool obstacle = false;
+     if (laser_proximity_)
+     {
+         obstacle = true;

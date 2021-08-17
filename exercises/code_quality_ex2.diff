@@ -1,0 +1,18 @@
+diff --git a/src/fictibot_drivers/src/motor_manager.cpp b/src/fictibot_drivers/src/motor_manager.cpp
+index 7edb289..373b454 100644
+--- a/src/fictibot_drivers/src/motor_manager.cpp
++++ b/src/fictibot_drivers/src/motor_manager.cpp
+@@ -70,11 +70,10 @@ void MotorManager::spin()
+         }
+     }
+ 
+-    double delta_v, limit;
+     if (!stopped)
+     {
+-        delta_v = command_.linear - velocity_.linear;
+-        limit = LINEAR_ACCEL * delta_t_;
++        double delta_v = command_.linear - velocity_.linear;
++        double limit = LINEAR_ACCEL * delta_t_;
+         if (command_.linear >= MIN_LINEAR)
+         {
+             if (command_.linear <= MAX_LINEAR)

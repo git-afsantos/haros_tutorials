@@ -1,0 +1,114 @@
+diff --git a/src/fictibot_drivers/include/fictibot_drivers/motor_manager.h b/src/fictibot_drivers/include/fictibot_drivers/motor_manager.h
+index b62d07a..b41196b 100644
+--- a/src/fictibot_drivers/include/fictibot_drivers/motor_manager.h
++++ b/src/fictibot_drivers/include/fictibot_drivers/motor_manager.h
+@@ -31,6 +31,9 @@ private:
+     void stop_callback(const std_msgs::Empty::ConstPtr& msg);
+ 
+     void velocity_callback(const fictibot_msgs::VelocityCommand::ConstPtr& msg);
++
++    void update_linear_vel();
++    void update_angular_vel();
+ };
+ 
+ #endif /*MOTOR_MANAGER_H_*/
+diff --git a/src/fictibot_drivers/src/motor_manager.cpp b/src/fictibot_drivers/src/motor_manager.cpp
+index 373b454..e340e46 100644
+--- a/src/fictibot_drivers/src/motor_manager.cpp
++++ b/src/fictibot_drivers/src/motor_manager.cpp
+@@ -72,54 +72,63 @@ void MotorManager::spin()
+ 
+     if (!stopped)
+     {
+-        double delta_v = command_.linear - velocity_.linear;
+-        double limit = LINEAR_ACCEL * delta_t_;
+-        if (command_.linear >= MIN_LINEAR)
++        update_linear_vel();
++        update_angular_vel();
++    }
++
++    vel_publisher_.publish(velocity_);
++}
++
++void MotorManager::update_linear_vel()
++{
++    double delta_v = command_.linear - velocity_.linear;
++    double limit = LINEAR_ACCEL * delta_t_;
++    if (command_.linear >= MIN_LINEAR)
++    {
++        if (command_.linear <= MAX_LINEAR)
+         {
+-            if (command_.linear <= MAX_LINEAR)
++            if (delta_v < 0)
+             {
+-                if (delta_v < 0)
++                if (delta_v < -limit)
+                 {
+-                    if (delta_v < -limit)
+-                    {
+-                        delta_v = -limit;
+-                    }
++                    delta_v = -limit;
+                 }
+-                else
++            }
++            else
++            {
++                if (delta_v > limit)
+                 {
+-                    if (delta_v > limit)
+-                    {
+-                        delta_v = limit;
+-                    }
++                    delta_v = limit;
+                 }
+-                velocity_.linear += delta_v;
+             }
++            velocity_.linear += delta_v;
+         }
++    }
++}
+ 
+-        delta_v = command_.angular - velocity_.angular;
+-        limit = ANGULAR_ACCEL * delta_t_;
+-        if (command_.angular >= MIN_ANGULAR)
++void MotorManager::update_angular_vel()
++{
++    double delta_v = command_.angular - velocity_.angular;
++    double limit = ANGULAR_ACCEL * delta_t_;
++    if (command_.angular >= MIN_ANGULAR)
++    {
++        if (command_.angular <= MAX_ANGULAR)
+         {
+-            if (command_.angular <= MAX_ANGULAR)
++            if (delta_v < 0)
+             {
+-                if (delta_v < 0)
++                if (delta_v < -limit)
+                 {
+-                    if (delta_v < -limit)
+-                    {
+-                        delta_v = -limit;
+-                    }
++                    delta_v = -limit;
+                 }
+-                else
++            }
++            else
++            {
++                if (delta_v > limit)
+                 {
+-                    if (delta_v > limit)
+-                    {
+-                        delta_v = limit;
+-                    }
++                    delta_v = limit;
+                 }
+-                velocity_.angular += delta_v;
+             }
++            velocity_.angular += delta_v;
+         }
+     }
+-
+-    vel_publisher_.publish(velocity_);
+ }

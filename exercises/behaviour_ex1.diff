@@ -1,0 +1,33 @@
+diff --git a/projects/fictibot.yaml b/projects/fictibot.yaml
+index 42a51a9..0719254 100644
+--- a/projects/fictibot.yaml
++++ b/projects/fictibot.yaml
+@@ -30,6 +30,11 @@ configurations:
+             - name: One Publisher Per Topic
+               details: "Found {n} topics with multiple publishers - {entities}"
+               query: "topics[len(self.publishers) > 1]"
++nodes:
++    fictibot_safety_controller/fictibot_safety_controller:
++        hpl:
++            properties:
++                - "globally: /laser {data <= 32} causes /cmd_stop within 200 ms"
+ analysis:
+     ignore:
+         tags:
+diff --git a/src/fictibot_safety_controller/src/safety_controller.cpp b/src/fictibot_safety_controller/src/safety_controller.cpp
+index 69591df..158c517 100644
+--- a/src/fictibot_safety_controller/src/safety_controller.cpp
++++ b/src/fictibot_safety_controller/src/safety_controller.cpp
+@@ -42,7 +42,11 @@ void SafetyController::laser_callback(const std_msgs::Int8::ConstPtr& msg)
+     if (!safe_) { return; }
+ 
+     // laser data in [0, 127] (cm)
+-    if (msg->data <= 64)
++    if (msg->data <= 32)
++    {
++        emergency_stop();
++    }
++    else if (msg->data <= 64)
+     {
+         slow_down();
+     }

@@ -1,0 +1,35 @@
+diff --git a/projects/fictibot.yaml b/projects/fictibot.yaml
+index 2f5399b..42a51a9 100644
+--- a/projects/fictibot.yaml
++++ b/projects/fictibot.yaml
+@@ -25,6 +25,11 @@ configurations:
+     multiplex:
+         launch:
+             - fictibot_launch/launch/multiplexer.launch
++        user_data:
++          haros_plugin_pyflwor:
++            - name: One Publisher Per Topic
++              details: "Found {n} topics with multiple publishers - {entities}"
++              query: "topics[len(self.publishers) > 1]"
+ analysis:
+     ignore:
+         tags:
+diff --git a/src/fictibot_launch/launch/multiplexer.launch b/src/fictibot_launch/launch/multiplexer.launch
+index 99c00b5..46c76f7 100644
+--- a/src/fictibot_launch/launch/multiplexer.launch
++++ b/src/fictibot_launch/launch/multiplexer.launch
+@@ -4,10 +4,11 @@
+   <node name="fictiplex" pkg="fictibot_multiplex" type="fictibot_multiplex" />
+ 
+   <node name="ficticontrol" pkg="fictibot_random_controller" type="fictibot_random_controller">
++    <remap from="cmd_vel" to="normal_cmd_vel" />
+   </node>
+ 
+   <node name="fictisafe" pkg="fictibot_safety_controller" type="fictibot_safety_controller">
+     <remap from="cmd_vel" to="high_cmd_vel" />
+-    <remap from="cmd_stop" to="high_cmd_vel" />
++    <remap from="cmd_stop" to="high_cmd_stop" />
+   </node>
+-</launch>
+\ No newline at end of file
++</launch>
