@@ -69,3 +69,10 @@ nodes:
         user_data:
             haros_plugin_pbt_gen:
                 extra_monitors: false
+analysis:
+    ignore:
+        tags:
+            - formatting
+            - copyright
+            - metrics
+            - integer-types

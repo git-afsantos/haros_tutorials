@@ -254,3 +254,10 @@ configurations:
                                     file: src/random_controller.cpp
                                     line: 26
                                     column: 5
+analysis:
+    ignore:
+        tags:
+            - formatting
+            - copyright
+            - metrics
+            - integer-types
