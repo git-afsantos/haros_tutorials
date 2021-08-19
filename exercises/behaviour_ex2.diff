@@ -3,13 +3,16 @@ index 0719254..553c893 100644
 --- a/projects/fictibot.yaml
 +++ b/projects/fictibot.yaml
 @@ -35,6 +35,10 @@ nodes:
-         hpl:
-             properties:
-                 - "globally: /laser {data <= 32} causes /cmd_stop within 200 ms"
+         user_data:
+             haros_plugin_pbt_gen:
+                 run_tests: true
 +    fictibot_random_controller/fictibot_random_controller:
 +        hpl:
 +            properties:
 +                - "globally: /bumper {left or center or right} causes /cmd_vel within 200 ms"
++        user_data:
++            haros_plugin_pbt_gen:
++                run_tests: true
  analysis:
      ignore:
          tags:
