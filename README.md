@@ -6,7 +6,7 @@ This is a repository with example code to try out the various features of the [H
 
 This repository contains ROS packages that serve no particular purpose, other than to try out HAROS.
 The `minimal_example` package is a minimal ROS package composed of two nodes with a ROS publisher, a ROS subscriber, a ROS service server, a ROS service client and a ROS parameter.
-The remaining `fictibot_*` packages make up a fictitious mobile robot system, called *Fictibot*.
+The remaining `fictibot_*` packages make up a fictitious mobile robot system, called *Fictibot* (see [the docs](./docs)).
 The packages provide software drivers for the mobile base, a random walker controller, a safety controller, a multiplexer to filter commands by priority, and message definitions.
 Despite being a fictitious robot, the system can be executed normally, using `rosrun`, or `roslaunch` with the various launch files contained in the packages.
 
