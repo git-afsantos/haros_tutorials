@@ -51,7 +51,7 @@ The robot accelerates, at most, `PI/2` rad/s².
 
 ## ROS Architecture
 
-The full Fictibot system is composed of four different nodes, connected via topics as per the attached [computation graph](https://github.com/git-afsantos/haros_tutorials/blob/master/docs/fictibot.pdf).
+The full Fictibot system is composed of four different nodes, connected via topics as per the attached computation graph ([PDF](https://github.com/git-afsantos/haros_tutorials/blob/master/docs/fictibot.pdf), [PNG](https://raw.githubusercontent.com/git-afsantos/haros_tutorials/master/docs/fictibot.png)).
 The subsections below provide details into each of the different types of node found in the diagram.
 
 
