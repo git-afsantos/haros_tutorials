@@ -50,6 +50,29 @@ Pressing this button should stop all movement *immediately* and its effects shou
 
 ## ROS Architecture
 
+The full Fictibot system is composed of four different nodes, connected via topics as per the attached [computation graph](https://github.com/git-afsantos/haros_tutorials/blob/master/docs/fictibot.pdf).
+The subsections below provide details into each of the different types of node found in the diagram.
+
+### `fictibot_driver`
+
+This node controls the sensors and actuators of Fictibot.
+Given that Fictibot is not an actual robot, the node simulates hardware by providing seemingly random values for its sensor readings.
+The full source code can be found in the [`fictibot_drivers` package](https://github.com/git-afsantos/haros_tutorials/tree/master/src/fictibot_drivers).
+
+**Subscribers**
+
+- `cmd_stop` (`std_msgs/Empty`): receiving a message on this topic means that the emergency stop button has been pressed.
+- `cmd_vel` ([`fictibot_msgs/VelocityCommand`](https://github.com/git-afsantos/haros_tutorials/blob/master/src/fictibot_msgs/msg/VelocityCommand.msg)): receiving a message on this topic sets the current target velocity (with linear and angular velocity components); its does *not* change the current velocity of the robot, only its goal.
+
+**Publishers**
+
 TODO
 
-see [BumperEvent.msg](https://github.com/git-afsantos/haros_tutorials/blob/master/src/fictibot_msgs/msg/BumperEvent.msg)
+([`fictibot_msgs/BumperEvent`](https://github.com/git-afsantos/haros_tutorials/blob/master/src/fictibot_msgs/msg/BumperEvent.msg))
+
+### `fictibot_random_controller`
+
+### `fictibot_safety_controller`
+
+### `fictibot_multiplex`
+
