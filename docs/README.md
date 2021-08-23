@@ -143,3 +143,15 @@ The full source code can be found in the [`fictibot_multiplex` package](https://
 - `cmd_vel` ([`fictibot_msgs/VelocityCommand`](https://github.com/git-afsantos/haros_tutorials/blob/master/src/fictibot_msgs/msg/VelocityCommand.msg)): forwards all received velocity command messages that pass through the priority filter.
 - `cmd_stop` (`std_msgs/Empty`): forwards all received emergency stop messages that pass through the priority filter.
 - `state` (`std_msgs/Int8`): publishes changes to the priority filter state of the multiplexer; negative values mean that all priorities are enabled (*low*, *normal* and *high*); a value of 0 means that only *normal* priority and *high* priority messages are allowed; positive values mean that only *high* priority messages are allowed.
+
+## Deployment
+
+A number of variants of the Fictibot system can be found in the [`fictibot_launch` package](https://github.com/git-afsantos/haros_tutorials/tree/master/src/fictibot_launch).
+
+- [`minimal.launch`](https://github.com/git-afsantos/haros_tutorials/blob/master/src/fictibot_launch/launch/minimal.launch): deploys the Fictibot driver and a Random Controller.
+- [`dual_bots.launch`](https://github.com/git-afsantos/haros_tutorials/blob/master/src/fictibot_launch/launch/dual_bots.launch): similar to `minimal.launch`, but deploys two Fictibot robots, one under the `/one` namespace and the second under the `/two` namespace.
+- [`multiplexer.launch`](https://github.com/git-afsantos/haros_tutorials/blob/master/src/fictibot_launch/launch/multiplexer.launch): deploys the Fictibot driver, a random controller, a safety controller and a multiplexer to manage the commands of both controllers. The safety controller is assigned a high priority, while the random controller is assigned a normal priority.
+- [`safe_random_walker.launch`](https://github.com/git-afsantos/haros_tutorials/blob/master/src/fictibot_launch/launch/safe_random_walker.launch): a slightly more complex version of `multiplexer.launch` that also configures available parameters with custom values.
+- [`type_check.launch`](https://github.com/git-afsantos/haros_tutorials/blob/master/src/fictibot_launch/launch/type_check.launch): deploys a Fictibot driver and a safety controller, but intentionally introduces a topic remapping that causes a message type error, for demonstration purposes.
+
+In addition to the launch files found in the `fictibot_launch` package, each package containing Fictibot nodes also provides `standalone.launch` files that launch the individual nodes of the respective package.
