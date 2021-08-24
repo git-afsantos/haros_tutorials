@@ -29,7 +29,12 @@ docker run -it \
 ```
 
 This command requires that the TCP port `8080` is available in your system, for HAROS to use as an HTTP server (for visualization).
-It binds the `/tmp` directory of the container to a `tmpfs` filesystem to improve efficiency (HAROS generates temporary files during its analysis) and it binds the `/root/ws/src/haros_tutorials` directory of the container to the root of this repository in the host system, in readonly mode.
+If you would rather use another port, e.g., 6480, change the `-p 8080:8080` line to `-p 8080:6480`.
+
+> **Note:** the Docker container does not automatically open your web browser for visualization.
+> Whenever HAROS runs the visualization server, you have to manually open your web browser at `localhost:8080` (or your selected port).
+
+In addition, the command binds the `/tmp` directory of the container to a `tmpfs` filesystem to improve efficiency (HAROS generates temporary files during its analysis) and it binds the `/root/ws/src/haros_tutorials` directory of the container to the root of this repository in the host system, in readonly mode.
 In essence, this means that you need only one copy of this repository and its source code, which shall remain in the host machine.
 The Docker container running HAROS has read access to the repository, and will treat it as if it were a native directory within the container, so that HAROS has access to the source code for analysis.
 
