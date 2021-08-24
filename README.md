@@ -5,18 +5,23 @@ This is a repository with example code to try out the various features of the [H
 ## What Is In The Box
 
 This repository contains ROS packages that serve no particular purpose, other than to try out HAROS.
-The `minimal_example` package is a minimal ROS package composed of two nodes with a ROS publisher, a ROS subscriber, a ROS service server, a ROS service client and a ROS parameter.
-The remaining `fictibot_*` packages make up a fictitious mobile robot system, called *Fictibot* (see [the docs](./docs)).
-The packages provide software drivers for the mobile base, a random walker controller, a safety controller, a multiplexer to filter commands by priority, and message definitions.
-Despite being a fictitious robot, the system can be executed normally, using `rosrun`, or `roslaunch` with the various launch files contained in the packages.
 
-In addition to the ROS packages, this repository also contains [example project files for HAROS](./projects) and [scripts](./scripts) to help execute HAROS.
+The `minimal_example` package is a minimal ROS package composed of two nodes with a ROS publisher, a ROS subscriber, a ROS service server, a ROS service client and a ROS parameter.
+
+The `fictibot_*` packages make up a fictitious mobile robot system, called *Fictibot* (see [the docs](./docs)).
+These packages provide software drivers for the mobile base, a random walker controller, a safety controller, a multiplexer to filter commands by priority, and message definitions.
+Despite being a fictitious robot, the system can be executed normally, using `rosrun`, or `roslaunch` with the various provided launch files.
+
+In addition to the ROS packages, this repository also contains example [project files](./projects) for HAROS, [scripts](./scripts) to help execute HAROS with the right arguments, and files to create a [Docker image](https://github.com/git-afsantos/haros_tutorials/tree/master/docker) with HAROS.
 
 ## Installing
 
-You can automate much of the installation of HAROS and this repository with [make-haros-easy](https://github.com/git-afsantos/make-haros-easy).
+> **Note:** If you want to try HAROS with Docker, you need only clone this repository and follow the [Docker instructions](https://github.com/git-afsantos/haros_tutorials/tree/master/docker).
+>
+> If you would rather follow a step by step installation, see the [HAROS instructions](https://github.com/git-afsantos/haros/blob/master/INSTALL.md) to install HAROS, and the remainder of this section for the ROS packages in this repository.
+> The [*Make HAROS Easy* repository](https://github.com/git-afsantos/make-haros-easy) provides a number of convenience scripts that automate much of this process.
 
-For a manual installation, the first step is to ensure that you have a working [catkin workspace](http://wiki.ros.org/catkin/Tutorials/create_a_workspace).
+The first step is to ensure that you have a working [catkin workspace](http://wiki.ros.org/catkin/Tutorials/create_a_workspace).
 Depending on your setup, you might want to work with multiple workspaces, and create a new workspace for this tutorial.
 Let us call it `haros_ws`.
 
@@ -52,8 +57,8 @@ catkin_make -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_CXX_COMPILER=/usr/bin/clan
 Replace `src` in the first command with the source space of your workspace, if it is named differently.
 Replace `/usr/bin/clang++-6.0` with the correct path to your `clang++` version.
 
-**Note:** it might be useful to turn this into a script and place it at the root of the workspace, so that you do not forget to update `compile_commands.json` when you build your ROS workspace.
-
+> **Note:** it might be useful to turn this into a script and place it at the root of the workspace, so that you do not forget to update `compile_commands.json` when you build your ROS workspace.
+ 
 ```bash
 #!/usr/bin/env bash
 catkin_make --force-cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-6.0
