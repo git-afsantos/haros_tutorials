@@ -1,7 +1,7 @@
 # Docker Image for the HAROS Tutorial
 
 This directory contains files to build and run a Docker image with a functional installation of HAROS.
-It is intended to be used with the source code found in this repository and the target application for analysis.
+It is intended to be used with the source code found in this repository as the target application for analysis.
 
 Once you have Docker available in your system, navigate to this directory.
 
