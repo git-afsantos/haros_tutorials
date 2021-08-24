@@ -55,7 +55,7 @@ cd src/haros_tutorials
 ```
 
 You should see the output of HAROS being printed.
-AFter a while, the analysis should complete and HAROS will start the visualization server (unless you run analysis-only commands manually, such as `haros analyse`).
+After a while, the analysis should complete and HAROS will start the visualization server (unless you run analysis-only commands manually, such as `haros analyse`).
 
 > [HAROS] Serving visualisation at 0.0.0.0:8080  
 > [HAROS] Press enter to shutdown the viz server:
