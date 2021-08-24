@@ -53,3 +53,10 @@ Try, for instance, the [`fictibot.sh` script](https://github.com/git-afsantos/ha
 cd src/haros_tutorials
 ./scripts/fictibot.sh
 ```
+
+You should see the output of HAROS being printed.
+AFter a while, the analysis should complete and HAROS will start the visualization server (unless you run analysis-only commands manually, such as `haros analyse`).
+
+> [HAROS] Serving visualisation at 0.0.0.0:8080
+
+With this, you may open your web browser at `localhost:8080` (or your chosen port for the `docker run` command) and explore the analysis results.
