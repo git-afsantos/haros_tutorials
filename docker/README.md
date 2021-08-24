@@ -42,7 +42,7 @@ source devel/setup.bash
 ```
 
 With this, the container is ready to run `haros`.
-Try, for instance the [`fictibot.sh` script](https://github.com/git-afsantos/haros_tutorials/blob/master/scripts/fictibot.sh):
+Try, for instance, the [`fictibot.sh` script](https://github.com/git-afsantos/haros_tutorials/blob/master/scripts/fictibot.sh):
 
 ```bash
 cd src/haros_tutorials
