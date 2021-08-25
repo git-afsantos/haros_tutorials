@@ -70,9 +70,9 @@ With this setup, we are now ready to move into the actual exercises.
 
 ## Exercise 1
 
-> **Difficulty:** Easy
-> **Plugin:** `haros_plugin_cppcheck`
-> **Package:** `fictibot_random_controller`
+> **Difficulty:** Easy  
+> **Plugin:** `haros_plugin_cppcheck`  
+> **Package:** `fictibot_random_controller`  
 > **File:** `src/random_controller.cpp`
 
 ### Problem 
