@@ -101,8 +101,86 @@ Upon running the analysis again and refreshing the web browser, you should no lo
 
 ## Exercise 2
 
-TBA
+> **Difficulty:** Easy  
+> **Plugin:** `haros_plugin_cppcheck`  
+> **Package:** `fictibot_drivers`  
+> **File:** `src/motor_manager.cpp`
+
+### Problem 
+
+Two variables are not declared at their smallest possible scope.
+
+![Analysis Screen 3](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec2-code-quality/screen3.png)
+
+This issue does not represent a threat, but declaring variables at their smallest possible scope helps make the code more readable.
+Readers are not left guessing where the variable is going to be used.
+
+Your task is to locate these variables and move them down to the appropriate scope level.
+
+### Solution
+
+Go to the file and line of code pointed by HAROS, and simply move down the variable declarations of `delta_v` and `limit` to the inside of the `if` statement, as shown in the [diff file](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec2-code-quality/ex2.diff).
+
+```diff
+-    double delta_v, limit;
+     if (!stopped)
+     {
+-        delta_v = command_.linear - velocity_.linear;
+-        limit = LINEAR_ACCEL * delta_t_;
++        double delta_v = command_.linear - velocity_.linear;
++        double limit = LINEAR_ACCEL * delta_t_;
+```
+
+Upon running the analysis again and refreshing the web browser, you should no longer see this issue.
 
 ## Exercise 3
 
-TBA
+> **Difficulty:** Intermediate  
+> **Plugin:** `haros_plugin_lizard`  
+> **Package:** `fictibot_drivers`  
+> **File:** `src/motor_manager.cpp`
+
+### Problem 
+
+The `void spin()` function is too long and has a high cyclomatic complexity.
+
+![Analysis Screen 4](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec2-code-quality/screen4.png)
+
+Complex functions have too many decision points (`if` statements, `for` statements, etc.).
+They are harder for readers to understand and they are more difficult to test fully, because you have to consider all possible scenarios.
+
+Long functions are just a lot of code to scroll through.
+It is likely that such functions are performing more than one action/resposibility, and it is often better to split such functions into smaller chunks, especially if code duplication is involved.
+
+Your task is to locate the faulty function and refactor it, so that it becomes both shorter and less complex.
+
+### Solution
+
+**Step 1:** Go to the file and line of code pointed by HAROS and study the `spin()` function.
+
+The function has two sections that are nearly identical, save for changing different variables.
+One is an `if` statement regarding linear velocity (`command_.linear`) and another is an `if` statement regarding angular velocity (`command_.angular`).
+These sections are self-contained - meaning that one does not interfere or depend on the other - and can be transferred to their own functions.
+Splitting `spin()` into three functions, as shown in the [diff file](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec2-code-quality/ex3.diff) clears both issues.
+
+**Step 2:** Open the header file `fictibot_drivers/motor_manager.h` and add two new functions.
+
+```diff
+     void velocity_callback(const fictibot_msgs::VelocityCommand::ConstPtr& msg);
++
++    void update_linear_vel();
++    void update_angular_vel();
+```
+
+**Step 3:** Implement the new functions in the `cpp` file by moving the respective `if` statements from `spin()`, and add calls to these new functions in `spin()`.
+
+```cpp
+void MotorManager::spin()
+{
+     ...
+     if (!stopped)
+     {
+       update_linear_vel();
+       update_angular_vel();
+     }
+```
