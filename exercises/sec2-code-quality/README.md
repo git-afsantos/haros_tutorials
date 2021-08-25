@@ -70,7 +70,34 @@ With this setup, we are now ready to move into the actual exercises.
 
 ## Exercise 1
 
-TBA
+> **Difficulty:** Easy
+> **Plugin:** `haros_plugin_cppcheck`
+> **Package:** `fictibot_random_controller`
+> **File:** `src/random_controller.cpp`
+
+### Problem 
+
+There is an uninitialized variable in the Fictibot Random Controller package.
+
+![Analysis Screen 2](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec2-code-quality/screen2.png)
+
+Uninitialized variables are an issue because, depending on the compiler, the values they produce on read operations could be [unpredictable](https://stackoverflow.com/a/30172680) and end up changing program logic.
+They may even change every time the faulty function is called.
+
+Your task is to locate the uninitialized variable and assign it an initial value.
+
+### Solution
+
+Go to the file and line of code pointed by HAROS, and simply write down the initial value of `false`, as shown in the [diff file](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec2-code-quality/ex1.diff).
+
+```diff
+ void RandomController::spin()
+ {
+-    bool obstacle;
++    bool obstacle = false;
+```
+
+Upon running the analysis again and refreshing the web browser, you should no longer see this issue.
 
 ## Exercise 2
 
