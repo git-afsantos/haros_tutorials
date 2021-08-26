@@ -75,7 +75,7 @@ You should see a number of models available for visualization, such as the `dual
 
 ![Extracted Model 1](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec3-architecture/screen1.png)
 
-With this setup, we are now ready to move into the actual exercises.
+With this setup, we are now ready to move into the actual exercises.  
 From this point onward, you may also use the [`tutorial_script.sh` script](https://github.com/git-afsantos/haros_tutorials/blob/master/scripts/tutorial_script.sh) found in this repository, instead of typing the full HAROS command every time.
 It uses the `fictibot.yaml` project file as its input.
 
@@ -84,36 +84,88 @@ cd src/haros_tutorials
 ./tutorial_script.sh
 ```
 
+## Introduction
+
+Some issues can be detected simply by being familiar with the system's design and looking at the extracted models.
+Take the `dual_bots` model, for example.
+
+Looking at the documentation for [Fictibot's architecture](https://github.com/git-afsantos/haros_tutorials/tree/master/docs#ros-architecture), specifically the [Deployment section](https://github.com/git-afsantos/haros_tutorials/tree/master/docs#deployment), we can see that this model is supposed to launch two independent systems; one under the `/one` namespace and another under the `/two` namespace.
+But in the computation graph shown above, we can clearly see that one topic is shared between both systems, the `/cmd_vel` topic.
+This is not supposed to happen.
+
+We can spot another issue, also with the `/cmd_vel` topic, in the `safe_random_walker` configuration.
+The random controller node publishes on this topic, but there are no subscribers.
+From the documentation, we would expect this controller to be publishing on the *normal priority* input of the multiplexer instead.
+
+![Extracted Model 2](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec3-architecture/screen2.png)
+
+In the following exercises, we will detect and repair these types of problems.
+
 ## Exercise 1
 
 > **Difficulty:** Easy  
-> **Plugin:** `haros_plugin_pyflwor`  
+> **Plugin:** None  
 > **Package:** `fictibot_random_controller`  
 > **File:** `src/random_controller.cpp`
 
 ### Problem
 
-The `cmd_vel` topic publisher uses a global name in the `advertise()` function.
-Global names are discouraged, because they make it more troublesome to instantiate multiple nodes of the same type, or organise components under namespaces.
+HAROS automatically reports that, in the Fictibot random controller package, a topic publisher uses the global name `/cmd_vel` in the `advertise()` function.
 
-This issue makes two of the extracted models incorrect.
-The affected graphs are `dual_bots` and `safe_random_walker`.
+![Analysis Screen 1](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec3-architecture/screen3.png)
+
+Global names are discouraged, because they make it more troublesome to instantiate multiple nodes of the same type, or organise components under namespaces.
+And we have seen exactly this type of problem in the diagrams above, with this exact node and topic.
+
+Your task is to change the global name into a relative name, and then inspect the launch files in `fictibot_launch` to see if any `remap` tag is affected.
 
 ### Solution
 
-It suffices to remove the forward slash in the topic name, as shown in the [diff file](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec3-architecture/ex1.diff).
+Locate the faulty call to `advertise()` in the file and line pointed by HAROS.
+Then, remove the forward slash in the topic name, as shown in the [diff file](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec3-architecture/ex1.diff).
 
 ```diff
 -    command_publisher_ = n.advertise<fictibot_msgs::VelocityCommand>("/cmd_vel", 1);
 +    command_publisher_ = n.advertise<fictibot_msgs::VelocityCommand>("cmd_vel", 1);
 ```
 
-Upon running the analysis again and refreshing the web browser, you should no longer see this issue.
+This suffices to resolve the issue, but we have to check that, by fixing this issue, we are not introducing new bugs in other models.
+Check if any launch file relies on the global name we had prior, for example with `grep`,
+
+```bash
+grep "cmd_vel" src/fictibot_launch/launch/*.launch
+```
+
+Which produces:
+
+```
+src/fictibot_launch/launch/multiplexer.launch:
+    <remap from="cmd_vel" to="high_cmd_vel" />
+src/fictibot_launch/launch/multiplexer.launch:
+    <remap from="cmd_stop" to="high_cmd_vel" />
+src/fictibot_launch/launch/safe_random_walker.launch:
+    <remap from="cmd_vel" to="normal_cmd_vel" />
+src/fictibot_launch/launch/safe_random_walker.launch:
+    <remap from="cmd_vel" to="high_cmd_vel" />
+src/fictibot_launch/launch/type_check.launch:
+    <remap from="cmd_stop" to="cmd_vel" />
+```
+
+There are no `remap from="/cmd_vel"`, meaning that, in principle, this change should be safe to make.
+
+Upon running the analysis again and refreshing the web browser, the two previously incorrect models, `dual_bots` and `safe_random_walker`, should change to their correct form.
+
+```bash
+haros full -s 0.0.0.0:8080 -n -p projects/fictibot.yaml
+```
+
+![Extracted Model 3](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec3-architecture/screen4.png)
 
 ## Exercise 2
 
 > **Difficulty:** Intermediate  
 > **Plugin:** `haros_plugin_pyflwor`  
+> **Configuration:** `multiplex`  
 > **Package:** `fictibot_launch`  
 > **File:** `launch/multiplex.launch`
 
