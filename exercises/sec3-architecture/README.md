@@ -282,7 +282,7 @@ Thus, this is an orchestration problem, in the `multiplexer.launch` file.
 Your **first task** is to determine the cause and fix it.
 
 The `/high_cmd_vel` topic seems to have only the one, expected publisher.
-Select it and inspect it with the **i** button.
+Select it and inspect it with the `i` button.
 
 ![Analysis Screen 7](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec3-architecture/screen7.png)
 
