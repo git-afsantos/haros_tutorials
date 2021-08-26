@@ -12,6 +12,7 @@ Besides manual inspection of the graphical models, we will be using the HAROS [p
 
 Quick links:
 
+- [Introduction](#introduction)
 - [Exercise 1](#exercise-1)
 - [Exercise 2](#exercise-2)
 
@@ -112,7 +113,7 @@ In the following exercises, we will detect and repair these types of problems.
 
 HAROS automatically reports that, in the Fictibot random controller package, a topic publisher uses the global name `/cmd_vel` in the `advertise()` function.
 
-![Analysis Screen 1](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec3-architecture/screen3.png)
+![Analysis Screen 3](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec3-architecture/screen3.png)
 
 Global names are discouraged, because they make it more troublesome to instantiate multiple nodes of the same type, or organise components under namespaces.
 And we have seen exactly this type of problem in the diagrams above, with this exact node and topic.
@@ -138,18 +139,11 @@ grep "cmd_vel" src/fictibot_launch/launch/*.launch
 
 Which produces:
 
-```
-src/fictibot_launch/launch/multiplexer.launch:
-    <remap from="cmd_vel" to="high_cmd_vel" />
-src/fictibot_launch/launch/multiplexer.launch:
-    <remap from="cmd_stop" to="high_cmd_vel" />
-src/fictibot_launch/launch/safe_random_walker.launch:
-    <remap from="cmd_vel" to="normal_cmd_vel" />
-src/fictibot_launch/launch/safe_random_walker.launch:
-    <remap from="cmd_vel" to="high_cmd_vel" />
-src/fictibot_launch/launch/type_check.launch:
-    <remap from="cmd_stop" to="cmd_vel" />
-```
+> *src/fictibot_launch/launch/multiplexer.launch:* `  <remap from="cmd_vel" to="high_cmd_vel" />`  
+> *src/fictibot_launch/launch/multiplexer.launch:* `  <remap from="cmd_stop" to="high_cmd_vel" />`  
+> *src/fictibot_launch/launch/safe_random_walker.launch:* `    <remap from="cmd_vel" to="normal_cmd_vel" />`  
+> *src/fictibot_launch/launch/safe_random_walker.launch:* `    <remap from="cmd_vel" to="high_cmd_vel" />`  
+> *src/fictibot_launch/launch/type_check.launch:* `  <remap from="cmd_stop" to="cmd_vel" />`  
 
 There are no `remap from="/cmd_vel"`, meaning that, in principle, this change should be safe to make.
 
@@ -159,44 +153,165 @@ Upon running the analysis again and refreshing the web browser, the two previous
 haros full -s 0.0.0.0:8080 -n -p projects/fictibot.yaml
 ```
 
-![Extracted Model 3](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec3-architecture/screen4.png)
+![Extracted Model 4](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec3-architecture/screen4.png)
 
-## Exercise 2
+## Exercise 2.A
+
+> **Difficulty:** Easy  
+> **Plugin:** `haros_plugin_pyflwor`  
+> **Configuration:** `multiplex`
+
+### Problem
+
+Finding architectural problems via manual inspection can be done, but it is laborious and prone to error.
+With the use of architectural queries, we can automate the detection of certain undesirable patterns.
+
+A pattern that often represents an orchestration error is the presence of multiple publishers on a single topic.
+Topics are normally used for one-to-one and one-to-many relations, not many-to-many (although they can be).
+
+Your task is to check the [PyFLWOR plugin](https://github.com/git-afsantos/haros-plugin-pyflwor) and write a query for the `multiplex` configuration that detects multiple publishers on a single topic.
+
+### Solution
+
+Open the `fictibot.yaml` project file and navigate to the `multiplex` configuration.
+
+After the `launch` section, write down a `user_data` section to provide settings for the PyFLWOR plugin.
+We want to define a list of rules (one query in this case), as we can see in the [diff file](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec3-architecture/ex2.diff).
+
+```diff
+     multiplex:
+         launch:
+             - fictibot_launch/launch/multiplexer.launch
++        user_data:
++          haros_plugin_pyflwor:
++            - name: One Publisher Per Topic
++              details: "Found {n} topics with multiple publishers - {entities}"
++              query: "topics[len(self.publishers) > 1]"
+```
+
+The `name` and `details` strings are just for presentation in the HAROS visualizer issue board.
+The `query` field is where the query over the HAROS model goes, written in `pyflwor` syntax (which is, roughly, a variant of Python syntax).
+
+It starts by selecting all `topics`.
+Then, with the square brackets, we filter only the topics whose number of `publishers` is greater than one.
+The attribute `self.publishers` (the publishers of each topic) is a list, hence the use of the length function, `len()`, to determine how many there are.
+
+If you are more used to thinking in terms of SQL queries, given the following database (which would be a subset of the extracted model),
+
+<details>
+<summary>SQL Schema</summary>
+
+```sql
+CREATE TABLE IF NOT EXISTS `topics` (
+  `id` int(6) unsigned NOT NULL,
+  `name` varchar(200) NOT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+INSERT INTO `topics` (`id`, `name`) VALUES
+  ('1', '/cmd_vel'),
+  ('2', '/high_cmd_vel'),
+  ('3', '/cmd_stop');
+
+CREATE TABLE IF NOT EXISTS `nodes` (
+  `id` int(6) unsigned NOT NULL,
+  `name` varchar(200) NOT NULL,
+  PRIMARY KEY (`id`)
+) DEFAULT CHARSET=utf8;
+INSERT INTO `nodes` (`id`, `name`) VALUES
+  ('1', '/ficticontrol'),
+  ('2', '/fictisafe'),
+  ('3', '/fictiplex');
+
+CREATE TABLE IF NOT EXISTS `publishers` (
+  `topic` int(6) unsigned NOT NULL,
+  `node` int(6) unsigned NOT NULL,
+  `n` int(6) unsigned NOT NULL,
+  PRIMARY KEY (`topic`, `node`)
+) DEFAULT CHARSET=utf8;
+INSERT INTO `publishers` (`topic`, `node`, `n`) VALUES
+  ('1', '1', '1'),
+  ('1', '3', '1'),
+  ('2', '2', '2'),
+  ('3', '3', '1');
+```
+</details>
+
+We would be writing the following query:
+
+```sql
+SELECT a.name, b.n
+FROM `topics` a
+INNER JOIN (
+    SELECT topic, node, SUM(n) n
+    FROM `publishers`
+    GROUP BY topic
+) b ON a.id = b.topic
+WHERE b.n > 1;
+```
+
+Overall, writing `topics[len(self.publishers) > 1]` is far simpler and more convenient.
+
+## Exercise 2.B
 
 > **Difficulty:** Intermediate  
 > **Plugin:** `haros_plugin_pyflwor`  
 > **Configuration:** `multiplex`  
 > **Package:** `fictibot_launch`  
-> **File:** `launch/multiplex.launch`
+> **File:** `launch/multiplexer.launch`
 
 ### Problem
 
-The random controller node in the `multiplex` configuration is missing a topic remapping from `cmd_vel` to `normal_cmd_vel`.
-Without it, there are two publishers on the `cmd_vel` topic subscribed by the base, the random controller and the multiplexer.
+After re-running the analysis with the query of the previous exercise, it is time to check for new issues.
 
-The safety controller node in the same configuration has a copy-and-paste error where both `cmd_vel` and `cmd_stop` are redirected to `high_cmd_vel`.
+Queries are related to the runtime entities of a ROS system (the elements of the ROS computation graph).
+If you check for *Runtime Issues* in the Issue board for the `multiplex` configuration, you should now see two issues being reported.
+
+![Analysis Screen 2](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec3-architecture/screen5.png)
+
+There are two topics with multiple publishers - the `/cmd_vel` topic, that provides velocity commands directly to the robot base, and the `/high_cmd_vel` topic, where high-priority velocity commands are sent to the multiplexer.
+
+This is not supposed to happen in the `multiplex` configuration of Fictibot.
+The `/cmd_vel` topic is supposed to be advertised only by the multiplexer, while the `/high_cmd_vel` topic is supposed to be advertised only by the safety controller.
+
+A closer inspection of the `/cmd_vel` topic reveals that the random controller node is also publishing on it.
+
+![Extracted Model 6](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec3-architecture/screen6.png)
+
+[Exercise 1](#exercise-1) already fixed the global name issue in the source code.
+Thus, this is an orchestration problem, in the `multiplexer.launch` file.
+Your **first task** is to determine the cause and fix it.
+
+The `/high_cmd_vel` topic seems to have only the one, expected publisher.
+Select it and inspect it with the **i** button.
+
+![Analysis Screen 7](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec3-architecture/screen7.png)
+
+We can see that *two* distinct locations in the source code of the safety controller are using this topic.
+We can also see that there are *two* message types being used for this topic, `std_msgs/Empty` (the expected type for `/high_cmd_stop`) and `fictibot_msgs/VelocityCommand` (the expected type for this topic).
+
+The C++ source code of the safety controller is correct.
+This is, again, an issue with orchestration.
+Your **second task** is to determine the cause, in the `multiplexer.launch` file, and fix it.
 
 ### Solution
 
-Writing a query to detect multiple publishers on a single topic detects both issues.
+From the documentation, we know that the random controller node is expected to publish on the `/normal_cmd_vel` topic, not on `/cmd_vel`.
+Upon inspection of the launch file, you will notice that the random controller is missing a topic remapping from `cmd_vel` to `normal_cmd_vel`.
+Without it, there are two publishers on the `/cmd_vel` topic subscribed by the base, the random controller and the multiplexer.
 
-```yaml
-user_data:
-  haros_plugin_pyflwor:
-    - name: One Publisher Per Topic
-      details: "Found {n} topics with multiple publishers - {entities}"
-      query: "topics[len(self.publishers) > 1]"
-```
-
-The fix for the former is to add the missing remapping to the launch file.
-The fix for the latter is to correct the remapped topic name.
-See the [diff file](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec3-architecture/ex2.diff).
+The fix is straightforward, as seen in the [diff file](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec3-architecture/ex2.diff).
+Add the missing remapping to the launch file.
 
 ```diff
    <node name="ficticontrol" pkg="fictibot_random_controller" type="fictibot_random_controller">
 +    <remap from="cmd_vel" to="normal_cmd_vel" />
    </node>
- 
+```
+
+Looking at the `node` tag for the safety controller in the same launch file, we can see that it has a copy-and-paste error, where both `cmd_vel` and `cmd_stop` are redirected to `high_cmd_vel`.
+The second remapping should be from `cmd_stop` to `high_cmd_stop`, instead.
+
+```diff
    <node name="fictisafe" pkg="fictibot_safety_controller" type="fictibot_safety_controller">
      <remap from="cmd_vel" to="high_cmd_vel" />
 -    <remap from="cmd_stop" to="high_cmd_vel" />
@@ -204,4 +319,4 @@ See the [diff file](https://github.com/git-afsantos/haros_tutorials/blob/master/
    </node>
 ```
 
-Upon running the analysis again and refreshing the web browser, you should no longer see this issue.
+Upon running the analysis again and refreshing the web browser, you should no longer see these issues.
