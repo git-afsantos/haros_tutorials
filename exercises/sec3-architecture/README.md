@@ -17,9 +17,72 @@ Quick links:
 
 ## Preparation
 
-TBA
+> **Note:** This tutorial assumes the use of the [Docker image](https://github.com/git-afsantos/haros_tutorials/tree/master/docker) provided in this repository.
+> Other setups should work in a similar fashion, albeit with some adaptation to the console commands.
+
+To enable the automatic extraction of architectural models from the source code, HAROS must parse the source code, as if compiling it.
+In a system such as Fictibot, written in C++, this requires a few steps prior to the actual extraction, due to how C++ is parsed and compiled.
+
+### Step 1 - Compilation Database File
+
+Generate a `compile_commands.json` file in the `build` directory of your workspace.
+
+> **Note:** executing the [`catkin.sh` script](https://github.com/git-afsantos/haros_tutorials/blob/master/docker/catkin.sh) in the provided Docker container will do this automatically for you.
+
+This file can be generated either with `cmake` or with `catkin_make`.
+For example commands and more details see the instruction [at the root](https://github.com/git-afsantos/haros_tutorials#installing) of this repository or the [FAQ](https://github.com/git-afsantos/haros/blob/master/docs/FAQ.md#the-models-only-show-nodes) about HAROS.
+
+> **Note:** This file must be generated again if significant changes to the source code occur (e.g., adding new files or changing included headers).
+
+> **Note:** This step requires the `clang++` compiler.
+
+### Step 2 - Configure HAROS
+
+Ensure that HAROS knows the paths to your workspace and to the Clang libraries.
+
+> **Note:** This is automatically done for you in the provided Docker image.
+
+After running HAROS for the first time, the HAROS home directory should be available.
+By default, it sits at `~/.haros`.
+In this directory, you should find a `configs.yaml` file that you need to edit.
+
+See the [HAROS instructions](https://github.com/git-afsantos/haros/blob/master/docs/USAGE.md#settings-file) for the meaning and expected value of each field, or see the [settings file](https://github.com/git-afsantos/haros_tutorials/blob/master/docker/configs.yaml) we use in the Docker image for an example.
+
+### Step 3 - Define ROS Systems
+
+Add some configurations to your HAROS project file.
+
+> **Note:** The Docker image provides project files that do this for you, such as [`fictibot.yaml`](https://github.com/git-afsantos/haros_tutorials/blob/master/projects/fictibot.yaml).
+
+To do this, you should add a `configurations` section to the project file where you define systems with lists of launch files.
+See the [HAROS instructions](https://github.com/git-afsantos/haros/blob/master/docs/USAGE.md#defining-custom-applications) for more details.
+
+### Step 4 - Run HAROS
+
+To enable model extraction you should add the `-n` option to your commands.
+Try it with the `fictibot.yaml` project as an example.
+
+```bash
+cd src/haros_tutorials
+haros full -s 0.0.0.0:8080 -n -p projects/fictibot.yaml
+```
+
+> **Note:** extracting models takes roughly as much time as it takes to compile the code.
+> HAROS uses some caching mechanisms, but a considerable slow down is to be expected when running for the first time.
+
+Once the analysis completes, open your web browser at `http://localhost:8080` and navigate to the *Models* tab at the top.
+You should see a number of models available for visualization, such as the `dual_bots` configuration.
+
+![Extracted Model 1](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec3-architecture/screen1.png)
 
 With this setup, we are now ready to move into the actual exercises.
+From this point onward, you may also use the [`tutorial_script.sh` script](https://github.com/git-afsantos/haros_tutorials/blob/master/scripts/tutorial_script.sh) found in this repository, instead of typing the full HAROS command every time.
+It uses the `fictibot.yaml` project file as its input.
+
+```bash
+cd src/haros_tutorials
+./tutorial_script.sh
+```
 
 ## Exercise 1
 
