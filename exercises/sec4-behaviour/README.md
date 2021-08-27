@@ -231,7 +231,7 @@ Compilation is not necessary for static analyses, but now we are running tests; 
 
 ## Exercise 1.B
 
-> **Difficulty:** Easy  
+> **Difficulty:** Intermediate  
 > **Plugin:** `haros_plugin_pbt_gen`  
 > **Package:** `fictibot_safety_controller`  
 > **File:** `src/safety_controller.cpp`
@@ -244,17 +244,84 @@ You will notice, though, that even after applying the changes it still reports a
 
 ![Analysis Screen 3](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec4-behaviour/screen3.png)
 
+In the counterexample trace the test plugin now sends **two** `/laser` messages to the system, one after the other, both with `data = 0`.
+One is considered *spam* because it is not required by the property's pattern, it was added by the test plugin for corner case exploration.
 
+Your task is to look back at the `safety_controller.cpp` source code and Fictibot's documentation, and figure out what happens when two messages are sent one after the other.
+Why did the second message, the witness, not receive its `/cmd_stop` response?
 
-> **Note:** even with this solution the tests keep failing, because the code has a mechanism to prevent message spam `if (!safe_) {return;}`, and this causes a *second* `/laser` message to go by without a response.
+### Solution
 
+The [safety controller documentation](https://github.com/git-afsantos/haros_tutorials/tree/master/docs#fictibot_safety_controller) states outright that:
+
+> This reactive node issues velocity and emergency stop commands in response to the sensors of Fictibot.
+> The messages are published only once every *t* seconds, with *t* being a configurable value.
+
+Sure enough, if we look into the source code, you will notice that the laser callback has an early return mechanism in place.
+
+```cpp
+void SafetyController::laser_callback(const std_msgs::Int8::ConstPtr& msg)
+{
+    if (!safe_) { return; }
+    // ...
+}
 ```
-[Example #58]: FAIL
->> @3,037ms sent spam on /laser
-data: 0
->> @3,238ms sent witness on /laser
-(same as above)
+
+When it receives the first laser message, the *spam* message, the `SafetyController::emergency_stop()` function is executed.
+
+```cpp
+void SafetyController::emergency_stop()
+{
+    safe_ = false;
+    timer_ = reaction_time_;
+    std_msgs::Empty stop_msg;
+    stop_publisher_.publish(stop_msg);
+}
 ```
+
+This function sets `safe_` to `false` - the condition that will later trigger the early return for the second message - and sets a `timer_`, presumably the timer mentioned in the documentation.
+
+> ... only once every *t* seconds, with *t* being a configurable value.
+
+The `void SafetyController::spin()` function, called at a frequency of 10 Hz, controls this timer and reverts the `safe_` value back to `true`, once the timer elapses.
+
+```cpp
+void SafetyController::spin()
+{
+    if (!safe_)
+    {
+        timer_ -= delta_t_;
+        if (timer_ <= 0.0)
+        {
+            safe_ = true;
+        }
+    }
+}
+```
+
+We can see in the constructor that `reaction_time_` is controlled by a ROS parameter,
+
+```cpp
+    n.param<double>("reaction_time", reaction_time_, REACTION_TIME);
+```
+
+And, according to the documentation,
+
+> `reaction_time` (`double`): the time (in seconds) during which the node avoids sending further (repeating) messages; defaults to 1 second.
+
+In conclusion, after the safety controller receives the first laser message, it sends the expected response and blocks for 1 second after that.
+The second message, which arrives within this blackout period, is simply ignored with the `return` statement.
+Thus, its response does **not** arrive within the 200 milliseconds specified in the property, and we have a counterexample.
+
+Cases like this are considered a *specification error* - the property expresses something other than what we really wanted.
+In the current version of the testing plugin, `v0.4`, and the current version of HPL, `v0.2`, there is no way to express the exact behaviour that is intended for the safety controller with a `causes` pattern.
+
+> **Note:** reducing the timer given via ROS parameters does not help; the test plugin can always send one message right after the other, and the second one will not receive a response.
+> Following the same logic, it also does not help to increase the allowed time window in the property to something over one second - the second response is not delayed, it simply does not exist.
+
+There is no direct action to be taken with this exercise.
+The goal is to demonstrate that property specification is not easy, and that, sometimes, exceptional behaviour is actually intended.
+
 
 ## Exercise 2
 
@@ -265,37 +332,75 @@ data: 0
 
 ### Problem
 
-The following property appears to be true, at a first glance, but is, in fact, false.
+We will now look into the [random controller's documentation](https://github.com/git-afsantos/haros_tutorials/tree/master/docs#fictibot_random_controller) for another interesting property. The `/bumper` subscriber, for example, states that it
 
-`globally: /bumper {left or center or right} causes /cmd_vel within 200 ms`
+> stores the bumper state to process at the next `RandomController::spin()` iteration; values of `true` in any field trigger a command change.
 
-The counterexample is the following:
+A `RandomController::spin()` iteration happens every 100 milliseconds, so the property would roughly translate to:
 
 ```
->> @687ms sent witness on /bumper
-    left: True
-    center: False
-    right: False
->> @687ms sent spam on /bumper
-    left: False
-    center: False
-    right: False
+globally: /bumper {left or center or right} causes /cmd_vel within 200 ms
 ```
 
-And the buggy section of the code is this:
+But, as we will see, this property is false.
 
-```cpp
-if (msg->left) {
-    bumper_left_pressed_ = true;
-} else {
-    bumper_left_pressed_ = false;
-}
-```
+Your first task is to add the random controller node and this property to the `nodes` of the `fictibot.yaml` project file.
 
-It is a classic of internal state being processed only every *t* seconds, and sending two rapid-fire messages that cancel each other.
+Your second task is to analyze the counterexample, determine its cause and fix it, if applicable.
 
 ### Solution
 
-In this case, the solution might be to do nothing, as shown in the [diff file](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec4-behaviour/ex2.diff), and assume that the property is wrong.
+The first task is, again, trivial, as shown in the [diff file](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec4-behaviour/ex2.diff).
 
-Alternatively, one can assign `false` to the internal flags only after publishing the reaction message; or one could publish the reaction message immediately in the callback.
+```diff
+         user_data:
+             haros_plugin_pbt_gen:
+                 run_tests: true
++    fictibot_random_controller/fictibot_random_controller:
++        hpl:
++            properties:
++                - "globally: /bumper {left or center or right} causes /cmd_vel within 200 ms"
++        user_data:
++            haros_plugin_pbt_gen:
++                run_tests: true
+ analysis:
+```
+
+After running the analysis, we are shown a counterexample.
+
+![Analysis Screen 4](https://github.com/git-afsantos/haros_tutorials/blob/master/exercises/sec4-behaviour/screen4.png)
+
+The trace is composed of two bumper messages, one right after the other.
+The first message carries a `left` field with a value of `true`, while the second message carries the same field with a value of `false`.
+
+Looking at the bumper message callback, in the `random_controller.cpp` file, we can see a number of `if` statements.
+In particular, for the `left` field,
+
+```cpp
+void RandomController::bumper_callback(const fictibot_msgs::BumperEvent::ConstPtr& msg)
+{
+    if (msg->left)
+    {
+        bumper_left_pressed_ = true;
+    }
+    else
+    {
+        bumper_left_pressed_ = false;
+    }
+    // ...
+}
+```
+
+As stated in the documentation, the callback saves the values of the received message to process in the next `RandomController::spin()` iteration.
+
+What happens here is a coding pattern that can be found in various ROS systems.
+By saving values to the internal state, to process later, the system is vulnerable to a rapid sequence of messages overwriting the previous values *before* they get a chance to be processed.
+
+By sending two bumper message in rapid succession, the second cancelling the first, the testing plugin encountered a corner case in which the random controller will not trigger a new velocity command, even though the bumper *was* pressed.
+To be fair, the bumper was pressed for less than a millisecond.
+Whether this case should be handled regardless, or considered to be inconsequential (perhaps due to sensor noise) is left to the judgement of the developer.
+
+In this case, the solution might be to do nothing and assume that the property is too strong.
+
+Alternatively, one can assign `false` to the internal `bumper_left_pressed_` flag only after publishing the reaction message in `RandomController::spin()`.
+Or one could publish the reaction message immediately in the callback, as it is a relatively quick action that will not delay callback processing too much.
