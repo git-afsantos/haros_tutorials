@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <package>
   <name>minimal_example</name>
-  <version>0.1.0</version>
+  <version>1.0.0</version>
   <description>The minimal_example package</description>
 
-  <maintainer email="andre@todo.todo">Andre Santos</maintainer>
+  <maintainer email="haros.framework@gmail.com">Andre Santos</maintainer>
   <license>MIT</license>
-  <author email="andre@todo.todo">Andre Santos</author>
+  <author email="haros.framework@gmail.com">Andre Santos</author>
 
   <buildtool_depend>catkin</buildtool_depend>
 
