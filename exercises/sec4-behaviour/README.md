@@ -102,7 +102,7 @@ To make things easier to test, and to grasp the properties, we will be focusing 
 
 ## Exercise 1.A
 
-> **Difficulty:** Easy  
+> **Difficulty:** Intermediate  
 > **Plugin:** `haros_plugin_pbt_gen`  
 > **Package:** `fictibot_safety_controller`  
 > **File:** `src/safety_controller.cpp`
@@ -231,7 +231,7 @@ Compilation is not necessary for static analyses, but now we are running tests; 
 
 ## Exercise 1.B
 
-> **Difficulty:** Intermediate  
+> **Difficulty:** Hard  
 > **Plugin:** `haros_plugin_pbt_gen`  
 > **Package:** `fictibot_safety_controller`  
 > **File:** `src/safety_controller.cpp`
