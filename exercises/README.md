@@ -1,6 +1,7 @@
 # Basic HAROS Tutorial
 
 This directory provides a series of basic exercises to try out [HAROS](https://github.com/git-afsantos/haros) using the ROS packages provided in this repository as a target application for analysis.
+Hands-on videos following the instructions and exercises are available [on YouTube](https://youtube.com/playlist?list=PLrXxXaugT0cwVhjhlnxY6DU0_WYPLEmgq).
 
 The exercises cover various types of analyses with progressing difficulty, from internal code quality to architecture analysis and property-based testing.
 If applicable, solutions for the exercises are also provided.
