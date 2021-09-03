@@ -2,6 +2,8 @@
 
 This is a repository with example code to try out the various features of the [HAROS framework](http://github.com/git-afsantos/haros).
 
+Hands-on videos following the instructions and exercises in this repository are available [on YouTube](https://youtube.com/playlist?list=PLrXxXaugT0cwVhjhlnxY6DU0_WYPLEmgq).
+
 ## What Is In The Box
 
 This repository contains ROS packages that serve no particular purpose, other than to try out HAROS.
