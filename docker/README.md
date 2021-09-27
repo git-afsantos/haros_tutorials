@@ -3,6 +3,9 @@
 This directory contains files to build and run a Docker image with a functional installation of HAROS.
 It is intended to be used with the source code found in this repository as the target application for analysis.
 
+- Pre-built image: [Releases of this repository](https://github.com/git-afsantos/haros_tutorials/releases/download/v1.0.0/fictibot.tar.gz)
+- To build it yourself: read on
+
 Once you have Docker available in your system, navigate to this directory.
 
 ```bash
