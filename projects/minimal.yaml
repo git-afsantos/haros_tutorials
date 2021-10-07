@@ -4,7 +4,11 @@
 project: Minimal
 packages:
     - minimal_example
+    - minimal_python
 configurations:
-    minimal:
+    minimal_cpp:
         launch:
             - minimal_example/launch/minimal.launch
+    minimal_python:
+        launch:
+            - minimal_python/launch/minimal.launch
